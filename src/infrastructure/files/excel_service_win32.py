@@ -27,8 +27,8 @@ class ExcelServiceWin32(IExcelService):
     def __enter__(self):
         """Inicializa e abre o Excel e o Workbook."""
         try:
-            if self.excel:
-                return
+            # if self.excel:
+            #     return
 
             # 1. Abre a Aplicação Excel (invisível para o usuário)
             self.excel = win32.Dispatch("Excel.Application")
