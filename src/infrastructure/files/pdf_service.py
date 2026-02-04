@@ -3,7 +3,7 @@ import os
 import re
 import pandas as pd
 from pypdf import PdfReader, PdfWriter, PageObject
-from pandas import DataFrame
+from pandas import DataFrame, isna
 from datetime import datetime
 
 from src.core.gateways.i_pathing_gateway import IPathingGateway
@@ -17,11 +17,12 @@ class PdfService(IPdfService):
     Args:
         IPdfService (_type_): _description_
     """
+
     def __init__(self, pathing_gw: IPathingGateway):
         self.pathing_gw = pathing_gw
         super().__init__()
 
-    def parse_relatorio_folha(self, fundo_escolhido:str) -> dict[str, DataFrame]:
+    def parse_relatorio_folha(self, fundo_escolhido: str) -> dict[str, DataFrame]:
         caminho_pdf_relatorio = str(self.pathing_gw.get_caminho_pdf_relatorio())
         with open(caminho_pdf_relatorio, "rb") as file:
             reader = PdfReader(file)
@@ -306,6 +307,86 @@ class PdfService(IPdfService):
                 ) + [page]
 
         return paginas_por_empresa
+
+    def parse_dados_provisoes(self, fundo: str) -> dict:
+        def to_number(s):
+            clean_s = s.replace(".", "").replace(",", ".")
+            f = float(clean_s)
+            return f
+
+        def is_number(s):
+            try:
+                to_number(s)
+                return True
+            except ValueError:
+                return False
+
+        caminho_pdf_relatorio = str(self.pathing_gw.get_caminho_pdf_relatorio())
+        with open(caminho_pdf_relatorio, "rb") as file:
+            text = ""
+            reader = PdfReader(file)
+            page = reader.pages[-1]
+            extracted_text = page.extract_text()
+            if extracted_text.find("Provisionamento de Férias") != -1:
+                text += extracted_text.replace("\n", " ").replace("  ", " ")
+
+        file.close()
+
+        categorias = ["RGPS", "FINANCEIRO", "CAPITALIZADO"]
+        beneficios = [
+            "ADICIONAL DE FÉRIAS",
+            "ABONO PECUNIÁRIO",
+            "13o SALÁRIO",
+            "LICENÇA PRÊMIO",
+        ]
+        campos = ["PROVISIONADO", "REALIZADO", "BAIXA"]
+        dados = {
+            cat: {ben: {campo: 0.0 for campo in campos} for ben in beneficios}
+            for cat in categorias
+        }
+
+        idx_rgps = text.find("RGPS")
+        idx_financeiro = text.find("FINANCEIRO")
+        idx_capitalizado = text.find("CAPITALIZADO")
+        idx_totais = text.find("Total:")
+
+        dados_rgps = [
+            to_number(t)
+            for t in text[idx_rgps:idx_financeiro].split(" ")
+            if is_number(t)
+        ][1:]
+        dados_financeiro = [
+            to_number(t)
+            for t in text[idx_financeiro:idx_capitalizado].split(" ")
+            if is_number(t)
+        ][1:]
+        dados_capitalizado = [
+            to_number(t)
+            for t in text[idx_capitalizado:idx_totais].split(" ")
+            if is_number(t)
+        ][1:]
+
+        todos_dados = {
+            "RGPS": dados_rgps,
+            "FINANCEIRO": dados_financeiro,
+            "CAPITALIZADO": dados_capitalizado,
+        }
+        for c in categorias:
+            dados_fundo = todos_dados[c]
+            remuneracao = dados_fundo.pop(0)
+            # dados[c]["Remuneração"] = remuneracao
+            for j, b in enumerate(beneficios):
+                provi = dados_fundo[j * 3]
+                realiz = dados_fundo[j * 3 + 1]
+                baixa = dados_fundo[j * 3 + 2]
+
+                dados[c][b]["PROVISIONADO"] = provi
+                dados[c][b]["REALIZADO"] = realiz
+                dados[c][b]["BAIXA"] = baixa
+
+        resultado = dados[fundo]
+
+        return resultado
 
     def export_pages(self, pages: list[PageObject], path: str):
         try:

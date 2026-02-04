@@ -27,19 +27,19 @@ class GerarConferenciaUseCase:
         saldos = self.pagamento_uc.gerar_saldos(
             conferencia_ferias, proventos, descontos
         )
-        nls_fundo = self._gerar_nls_folha(fundo, saldos)
+        provisoes = self.pagamento_uc.get_provisoes(fundo)
+        nls_fundo = self._gerar_nls_folha(fundo, saldos, provisoes)
         totais = self._calcular_totais(nls_fundo, proventos, descontos)
 
         # dados_510 = self._obter_valores_510(nls_fundo)
         # self.pagamento_uc.conferencia_gw.salvar_dados_510(dados_510)
-        
+
         self.pagamento_uc.conferencia_gw.salvar_dados_conferencia(
             proventos, descontos, totais
         )
 
         # self.pagamento_uc.conferencia_gw.salvar_dados_relatorio(dados_relatorio)
         self.pagamento_uc.conferencia_gw.salvar_nls_conferencia(nls_fundo, fundo)
-    
 
     def _calcular_totais(
         self,
@@ -86,16 +86,21 @@ class GerarConferenciaUseCase:
 
         return totais
 
-    def _gerar_nls_folha(self, fundo: str, saldos: dict) -> list[NotaLancamento]:
+    def _gerar_nls_folha(
+        self, fundo: str, saldos: dict, provisoes: dict
+    ) -> list[NotaLancamento]:
         nomes_nls = self.pagamento_uc.nl_folha_gw.get_nomes_templates(fundo)
         caminho_planilha_templates = self.pathing_gw.get_caminho_template(fundo)
         nls: list[NotaLancamento] = []
         for nome_nl in nomes_nls:
             nl_gerada = self.pagamento_uc.gerar_nl_folha(
-                caminho_planilha_templates, nome_nl, saldos
+                caminho_planilha_templates, nome_nl, saldos, provisoes
             )
             nl_gerada.nome = nome_nl
             nls.append(nl_gerada)
+
+        # nl_provisoes = self.pagamento_uc.gerar_nl_provisoes(fundo, saldos)
+        # nls.append(nl_provisoes)
         return nls
 
     def _obter_valores_510(self, nls_fundo: list[NotaLancamento]) -> DataFrame:
@@ -109,5 +114,5 @@ class GerarConferenciaUseCase:
         df_concat = pd.concat(dfs_filtrados, ignore_index=True)
 
         resultado = df_concat[df_concat["EVENTO"].astype(str).str.startswith("510")]
-    
+
         return cast(DataFrame, resultado)

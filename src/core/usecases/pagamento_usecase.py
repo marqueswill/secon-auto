@@ -274,27 +274,39 @@ class PagamentoUseCase:
 
         return saldos
 
+    def get_provisoes(self, fundo) -> dict[str, dict]:
+        return self.pdf_svc.parse_dados_provisoes(fundo)
+
     def extrair_dados_relatorio(self, fundo_escolhido: str):
         return self.pdf_svc.parse_relatorio_folha(fundo_escolhido)
 
     def gerar_nl_folha(
-        self, caminho_template: str, nome_template: str, saldos: dict
+        self,
+        caminho_template: str,
+        nome_template: str,
+        saldos: dict,
+        provisoes: dict = {},
     ) -> NotaLancamento:
         """_summary_ Recebe um fundo e o nome de um nome de uma nl e preenche o template encontrado
         com os valores de saldo passados.
         """
+
         template = self.nl_folha_gw.carregar_template_nl(
             caminho_template, nome_template
         )
 
-        folha_pagamento = template.dados
+        if template is None:
+            raise Exception(f"Não foi possível carregar o template: {nome_template}.")
 
+        folha_pagamento = template.dados
         folha_pagamento["VALOR"] = 0.0
 
         # Calcula o valor para cada linha
         for idx, row in folha_pagamento.iterrows():
-            class_orc = row.get("CLASS. ORC", "")
-            class_cont = row.get("CLASS. CONT", "")
+            evento = str(row.get("EVENTO", ""))
+            insc = str(row.get("INSCRIÇÃO", ""))
+            class_orc = str(row.get("CLASS. ORC", ""))
+            class_cont = str(row.get("CLASS. CONT", ""))
             somar = row.get("SOMAR", [])
             subtrair = row.get("SUBTRAIR", [])
             tipo = (
@@ -305,17 +317,37 @@ class PagamentoUseCase:
 
             if tipo == "MANUAL":
                 folha_pagamento.at[idx, "VALOR"] = 0.000001
-            else:
+            elif tipo in [
+                "13o SALÁRIO",
+                "ABONO PECUNIÁRIO",
+                "ADICIONAL DE FÉRIAS",
+                "LICENÇA PRÊMIO",
+            ]:
+                if len(provisoes) == 0:
+                    raise Exception("Não foram encontradas provisões.")
+                valor_beneficio = self.obter_valor_provisionado(provisoes, tipo, evento)
+                folha_pagamento.at[idx, "VALOR"] = valor_beneficio
+            elif tipo in [
+                "ATIVO",
+                "INATIVO",
+                "COMPENSATÓRIA",
+                "PENSIONISTA",
+                "DESCONTO ADIANTAMENTO FÉRIAS",
+                "PROVENTO ADIANTAMENTO FÉRIAS",
+            ]:
                 valor_somar = self.soma_codigos(str(somar), saldos[tipo])
                 valor_subtrair = self.soma_codigos(str(subtrair), saldos[tipo])
                 valor = valor_somar - valor_subtrair
                 folha_pagamento.at[idx, "VALOR"] = valor
+            else:
+                raise Exception(f"Tipo para cálculo de valor inválido: '{tipo}'")
 
         folha_pagamento.drop(columns=["SOMAR", "SUBTRAIR", "TIPO"], inplace=True)
         folha_pagamento = folha_pagamento[folha_pagamento["VALOR"] > 0]
         folha_pagamento = cast(pd.DataFrame, folha_pagamento)
-        folha_pagamento = folha_pagamento.sort_values(by=["INSCRIÇÃO"])
+        folha_pagamento = folha_pagamento.sort_values(by=["INSCRIÇÃO", "CLASS. ORC"])
         folha_pagamento.reset_index(drop=True, inplace=True)
+
         return NotaLancamento(folha_pagamento)
 
     def soma_codigos(self, codigos: str, dicionario: dict):
@@ -326,3 +358,116 @@ class PagamentoUseCase:
         resultado = sum(float(dicionario.get(str(c), 0.0)) for c in lista_codigos)
 
         return resultado
+
+    def obter_valor_provisionado(
+        self, provisoes: dict, tipo: str, evento: str
+    ) -> float:
+
+        provisionado = provisoes[tipo]["PROVISIONADO"]
+        realizado = provisoes[tipo]["REALIZADO"]
+        baixa = provisoes[tipo]["BAIXA"]
+        saldo = abs(provisionado - realizado)
+
+        if tipo == "LICENÇA PRÊMIO":
+            return provisionado
+
+        if provisionado > realizado and evento in ["560655", "560656", "560657"]:
+            return saldo
+
+        if provisionado <= realizado and evento in ["510005", "515001"]:
+            return saldo
+
+
+        return 0.0
+
+    # def gerar_nl_provisoes(self, fundo: str, saldos: dict) -> NotaLancamento:
+    #     dados_provisoes = self.pdf_svc.parse_dados_provisoes()
+    #     provisoes_fundo = dados_provisoes[fundo]
+
+    #     df = DataFrame(
+    #         columns=pd.Index(
+    #             {
+    #                 "EVENTO",
+    #                 "INSCRIÇÃO",
+    #                 "CLASS. CONT",
+    #                 "CLASS. ORC",
+    #                 "FONTE",
+    #                 "VALOR",
+    #             }
+    #         )
+    #     )
+
+    #     for beneficio in provisoes_fundo.keys():
+    #         provi = provisoes_fundo[beneficio]["Provisionado"]
+    #         realiz = provisoes_fundo[beneficio]["Realizado"]
+    #         baixa = provisoes_fundo[beneficio]["Baixa"]
+
+    #         if beneficio == "Adicional de Férias":
+    #             evento1 = ...
+    #             evento2 = ...
+
+    #             inscricao1 = ...
+    #             inscricao2 = ...
+
+    #             class_cont1 = ...
+    #             class_cont2 = ...
+
+    #             class_orc1 = ...
+    #             class_orc2 = ...
+
+    #             valor1 = ...
+    #             valor2 = ...
+
+    #         elif beneficio == "Abono Pecuniário":
+    #             evento1 = ...
+    #             evento2 = ...
+
+    #             inscricao1 = ...
+    #             inscricao2 = ...
+
+    #             class_cont1 = ...
+    #             class_cont2 = ...
+
+    #             class_orc1 = ...
+    #             class_orc2 = ...
+
+    #             valor1 = ...
+    #             valor2 = ...
+    #         elif beneficio == "13º Salário":
+    #             evento1 = "560655" if provi > realiz else "510005"
+    #             evento2 = "" if evento1 == "560655" else "515001"
+
+    #             inscricao1 = ...
+    #             inscricao2 = ...
+
+    #             class_cont1 = ...
+    #             class_cont2 = ...
+
+    #             class_orc1 = ...
+    #             class_orc2 = ...
+
+    #             valor1 = ...
+    #             valor2 = ...
+    #         elif beneficio == "Licença Prêmio":
+    #             evento1 = ...
+    #             evento2 = ...
+
+    #             inscricao1 = ...
+    #             inscricao2 = ...
+
+    #             class_cont1 = ...
+    #             class_cont2 = ...
+
+    #             class_orc1 = ...
+    #             class_orc2 = ...
+
+    #             valor1 = ...
+    #             valor2 = ...
+
+    #         print(provi, realiz, baixa)
+    #     print(df)
+    #     print(dados_provisoes)
+
+    #     exit()
+
+    #     return NotaLancamento(DataFrame(), "PROVISOES")
