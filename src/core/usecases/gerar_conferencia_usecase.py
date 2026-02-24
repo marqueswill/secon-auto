@@ -49,7 +49,11 @@ class GerarConferenciaUseCase:
     ) -> DataFrame:
 
         total_liquidado = 0
-        for dados_nl in [nl.dados for nl in nls if nl.nome != "ADIANTAMENTO_FERIAS"]:
+        for dados_nl in [
+            nl.dados
+            for nl in nls
+            if nl.nome not in ["ADIANTAMENTO_FERIAS", "PROVISIONAMENTOS"]
+        ]:
             total_liquidado += dados_nl.loc[
                 dados_nl["EVENTO"].astype(str).str.startswith("510", na=False), "VALOR"
             ].sum()
