@@ -12,20 +12,35 @@ class BaixaDiariasUseCase:
     def __init__(
         self,
         pathing_gw: IPathingGateway,
-        excel_svc: IExcelService,
         preenchimento_gw: IPreenchimentoGateway,
     ):
         self.pathing_gw = pathing_gw
-        self.excel_svc = excel_svc
         self.preenchimento_gw = preenchimento_gw
 
-    def executar(self):
-        dados = self.obter_dados()
-        dados_preenchimento = self.gerar_nls_baixa(dados)
-        self.preencher_nls(dados_preenchimento)
+    def executar(self, arquivos: list[str]):
+        for arquivo in arquivos:
+            dados = self.obter_dados(arquivo)
+            dados_preenchimento = self.gerar_nls_baixa(dados)
+            self.preencher_nls(dados_preenchimento)
 
-    def obter_dados(self) -> DataFrame:
-        return self.excel_svc.get_sheet(sheet_name="data", as_dataframe=True)
+    def listar_planilhas(self) -> list[str]:
+        caminho_atual = self.pathing_gw.get_current_file_path()
+        arquivos = self.pathing_gw.listar_arquivos(caminho_atual)
+        nomes_planilhas = [
+            nome
+            for nome in arquivos
+            if nome.endswith((".csv")) and not nome.startswith("~$")
+        ]
+        return nomes_planilhas
+
+    def obter_dados(self, arquivo: str) -> DataFrame:
+        caminho_planilha = (
+            self.pathing_gw.get_caminho_raiz_secon()
+            + f"SECON - General\\ANO_ATUAL\\BAIXA_DIARIAS\\{arquivo}"
+        )
+
+        df = pd.read_csv(caminho_planilha)
+        return df
 
     def gerar_nls_baixa(self, dados_baixa: DataFrame) -> list[DadosPreenchimento]:
 
@@ -37,17 +52,22 @@ class BaixaDiariasUseCase:
             evento_baixa = "560379"
             class_cont = "332110100"
             observacao = f"BAIXA DE ADIANTAMENTO DE VIAGENS (DIÁRIAS) REFERENTE A EVENTOS REALIZADOS NO MÊS DE {NOME_MES_ATUAL}."
-
             processo_limpo = re.sub(r"[ -.;]", "", str(processo))
 
-            nl_df = df[["COCREDOR", "FONTE", "SALDO"]].copy()
+            nl_df = df[["CREDOR", "FONTE", "Soma de SALDO"]].copy()
             nl_df = nl_df.rename(
-                columns={"COCREDOR": "INSCRIÇÃO", "FONTE": "FONTE", "SALDO": "VALOR"}
-            ) # type: ignore
+                columns={
+                    "CREDOR": "INSCRIÇÃO",
+                    "FONTE": "FONTE",
+                    "Soma de SALDO": "VALOR",
+                }
+            )  # type: ignore
 
+            nl_df["VALOR"] = nl_df["VALOR"].astype(str).str.replace(",", ".")
+            
             nl_df["EVENTO"] = evento_baixa
             nl_df["CLASS. CONT"] = class_cont
-            nl_df["CLASS. ORC"] = ""
+            nl_df["CLASS. ORC"] = "."
 
             colunas_finais = [
                 "EVENTO",
@@ -57,10 +77,9 @@ class BaixaDiariasUseCase:
                 "FONTE",
                 "VALOR",
             ]
-            nl_df = nl_df[colunas_finais].reset_index()
+            nl_df = nl_df[colunas_finais].reset_index(drop=True)
 
             lancamento = NotaLancamento(nl_df)
-
             cabecalho = CabecalhoNL(
                 prioridade="Z0",
                 credor="4 - UG/Gestão",

@@ -26,4 +26,7 @@ def ExtrairDadosR2000Controller():
 
 
 if __name__ == "__main__":
-    ExtrairDadosR2000Controller()
+    try:
+        ExtrairDadosR2000Controller()
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
