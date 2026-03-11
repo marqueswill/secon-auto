@@ -32,7 +32,6 @@ class PreenchimentoGateway(IPreenchimentoGateway):
             f"https://siggo.fazenda.df.gov.br/{ANO_ATUAL}/afc/nota-de-lancamento"
         )
         for dado in dados:
-            # TODO: melhorar a forma com que os dados são passados
             lancamento = dado.lancamento
             caebecalho = dado.cabecalho
 
@@ -63,7 +62,8 @@ class PreenchimentoGateway(IPreenchimentoGateway):
                         self.siggo_driver.preencher_campos(campos_lancamentos)
                         print("Preenchimento feito com sucesso. Indo para próxima NL.")
                         break
-                    except:
+                    except Exception as e:
+                        print(f"Ocorreu um erro: {e}")
                         print(f"\nTentativas feitas: {tentativa}")
                         if tentativa == 3:
                             print(f"Preenchimento falhou 3 vezes. NL foi ignorada")

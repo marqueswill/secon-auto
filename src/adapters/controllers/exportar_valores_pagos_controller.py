@@ -28,4 +28,7 @@ def ExportarValoresPagosController():
 
 
 if __name__ == "__main__":
-    ExportarValoresPagosController()
+    try:
+        ExportarValoresPagosController()
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")

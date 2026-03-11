@@ -179,12 +179,6 @@ class UseCaseFactory:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
-        caminho_planilha = (
-            pathing_gw.get_caminho_raiz_secon()
-            + f"SECON - General\\ANO_ATUAL\\RELATORIOS_GERENCIAIS\\DADOS_BAIXA_DIARIAS.xlsx"
-        )
-        excel_svc: IExcelService = ExcelService(caminho_planilha)
-        use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(
-            pathing_gw, excel_svc, preenchedor_gw
-        )
+
+        use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw)
         return use_case

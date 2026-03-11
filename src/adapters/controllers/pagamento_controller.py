@@ -99,4 +99,7 @@ def FolhaPagamentoController(test=False, run=True):
 
 
 if __name__ == "__main__":
-    FolhaPagamentoController()
+    try:
+        FolhaPagamentoController()
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")

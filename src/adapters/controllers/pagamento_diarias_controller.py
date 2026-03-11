@@ -32,4 +32,7 @@ def PagamentoDiariaController(run=True):
 
 
 if __name__ == "__main__":
-    PagamentoDiariaController()
+    try:
+        PagamentoDiariaController()
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
