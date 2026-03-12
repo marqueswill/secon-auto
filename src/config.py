@@ -7,7 +7,7 @@ except locale.Error:
     # Se falhar, tenta uma localidade comum para Windows
     locale.setlocale(locale.LC_ALL, "Portuguese_Brazil.1252")
 
-TESTE = False
+TESTE = True
 
 ANO_ATUAL = datetime.now().year
 MES_ATUAL = datetime.now().month
