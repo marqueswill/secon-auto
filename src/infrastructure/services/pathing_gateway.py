@@ -18,12 +18,16 @@ class PathingGateway(IPathingGateway):
         IPathingGateway (_type_): _description_
     """
 
+    def __init__(self) -> None:
+        self.username = os.getlogin().strip()
+        super().__init__()
+
     def get_caminho_raiz_secon(self) -> str:
         """
         Determina o caminho correto para o arquivo de template,
         verificando se o usuário está usando o caminho base ou o do OneDrive.
         """
-        username = os.getlogin().strip()
+        username = self.username
         caminho_base = (
             f"C:\\Users\\{username}\\Tribunal de Contas do Distrito Federal\\"
         )
@@ -64,7 +68,7 @@ class PathingGateway(IPathingGateway):
         caminho = (
             self.get_caminho_raiz_secon()
             + f"SECON - General\\ANO_ATUAL\\FOLHA_DE_PAGAMENTO_{ANO_ATUAL}\\TEMPLATES\\TEMPLATE_CONFERÊNCIA.xlsx"
-        )        
+        )
         return caminho
 
     def get_caminho_pasta_folha(self):
@@ -233,3 +237,6 @@ class PathingGateway(IPathingGateway):
 
         return caminhos
 
+    def get_downloads_path(self):
+        dir_path = os.path.join("C:", "Users", self.username, "Downloads")
+        return dir_path

@@ -1,42 +1,21 @@
+import time
+from pandas.io.common import file_path_to_url
+from src.config import *
+from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.gateways.i_siggo_service import  ISiggoService
+
+import requests
+
 class DownloadNLsUsecase:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, pathing_gw:IPathingGateway, siggo_svc: ISiggoService) -> None:
+        self.pathing_gw = pathing_gw
+        self.siggo_svc = siggo_svc
 
-    def executar(self, lista_nls:list[str]):...
-        # PASSO 1
-        # Acessar https://siggo.fazenda.df.gov.br/2026/afc/lista-nota-lancamento
+    def executar(self, lista_nls:list[str]):
+
+
+        self.siggo_svc.inicializar(hidden=False)
         
-        # PASSO 2
-        # Para cada NL, clicar para imprimir e salvar na pasta desejada
-        # OUUUUU usar request para dar um get em cada NL,
-        # Ex: {
-        # 	"GET": {
-        # 		"scheme": "https",
-        # 		"host": "siggoafc.fazenda.df.gov.br",
-        # 		"filename": "/2026/api/Report/Publica",
-        # 		"query": {
-        # 			"reportName": "DetalhamentoNotaLancamento",
-        # 			"ext": "pdf",
-        # 			"unidadeGestoraId": "20101",
-        # 			"gestaoId": "1",
-        # 			"numeroNotaLancamento": "2026NL00431", #variável
-        # 			"nomeUsuario": "***137531** - FERNANDA VIANA DE SOUZA"
-        # 		},
-        # 		"remote": {
-        # 			"Endereço": "10.70.203.240:443"
-        # 		}
-        # 	}
-        # }
-
-        # PASSO 3
-        # Salvar os PDFs em uma pasta
-
-        # PASSO 4
-        # Fazer parse desses PDF
-
-        # PASSO 5
-        # Processar o que tiver que processar
-
-        # PASSO 6
-        # Chorar
-
+        
+        for num_nl in lista_nls:
+            self.siggo_svc.download_nl(num_nl)

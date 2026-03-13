@@ -20,3 +20,7 @@ class ISiggoService(IWebDriverService):
 
     @abstractmethod
     def selecionar_opcoes(self, opcoes: dict): ...
+
+
+    @abstractmethod
+    def download_nl(self, num_nl:str):...

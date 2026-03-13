@@ -20,6 +20,7 @@ from src.core.usecases.pagamento_usecase import PagamentoUseCase
 from src.core.usecases.preenchimento_folha_usecase import PreenchimentoFolhaUseCase
 from src.core.usecases.preenchimento_nl_usecase import PreenchimentoNLUseCase
 from src.core.usecases.cancelamento_rp_usecase import CancelamentoRPUseCase
+from src.core.usecases.download_nls_usecase import DownloadNLsUsecase
 
 # Importe as INTERFACES (opcional, mas bom para type hints)
 from src.core.gateways.i_conferencia_gateway import IConferenciaGateway
@@ -181,4 +182,10 @@ class UseCaseFactory:
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
 
         use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw)
+        return use_case
+
+    def create_download_nls_usecase(self) -> DownloadNLsUsecase:
+        pathing_gw: IPathingGateway = PathingGateway()
+        siggo_service: ISiggoService = SiggoService()
+        use_case: DownloadNLsUsecase = DownloadNLsUsecase(pathing_gw, siggo_service)
         return use_case

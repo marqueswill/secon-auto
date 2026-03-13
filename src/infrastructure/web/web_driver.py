@@ -5,6 +5,7 @@ from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 import pandas as pd
 import time
+import os
 
 from src.core.gateways.i_web_driver_service import IWebDriverService
 from src.config import *
@@ -15,9 +16,9 @@ class WebDriver(IWebDriverService):
 
     driver: SeleniumWebDriver
 
-    def inicializar(self):
+    def inicializar(self, hidden=False):
         self.setup_pandas()
-        self.setup_driver()
+        self.setup_driver(hidden)
 
     def finalizar(self):
         self.driver.quit()
@@ -29,12 +30,36 @@ class WebDriver(IWebDriverService):
         pd.set_option("display.width", 0)
         pd.set_option("display.expand_frame_repr", False)
 
-    def setup_driver(self):
+    def setup_driver(self, hidden=False):
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
         options.add_experimental_option("detach", True)
         options.add_argument("--log-level=3")  # Suppress Chrome logs
         options.add_argument("--silent")
+
+        # --- NOVA CONFIGURAÇÃO DE DOWNLOAD ---
+        # Cria um caminho absoluto na pasta do seu projeto: ./Downloads/Automático/
+
+        caminho_home = os.path.expanduser('~')
+        download_dir = os.path.join(caminho_home, 'Downloads', 'Automático')
+        
+        # Garante que a pasta exista antes do Chrome tentar baixar algo nela
+        os.makedirs(download_dir, exist_ok=True)
+
+        # Adiciona as preferências ao Chrome
+        prefs = {
+            "download.default_directory": download_dir,
+            "download.prompt_for_download": False,  # Impede a janela "Salvar como"
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True,
+        }
+        options.add_experimental_option("prefs", prefs)
+
+        if hidden:
+            options.add_argument("--headless=new")
+            options.add_argument(
+                "--window-size=1920,1080"
+            )  # Garante que os elementos renderizem corretamente
 
         self.driver = webdriver.Chrome(options=options)
 
@@ -61,7 +86,7 @@ class WebDriver(IWebDriverService):
         msg_carregando = "/html/body/app-root/lib-layout/div[1]/div"
         self.esperar_carregamento(msg_carregando, timeout=120)
 
-        time.sleep(3)
+        # time.sleep(3)
 
     def fechar_primeira_aba(self):
         abas = self.driver.window_handles
@@ -85,5 +110,5 @@ class WebDriver(IWebDriverService):
                     time.sleep(1)
                     continue
             except:
-                time.sleep(1)
+                time.sleep(2)
                 break
