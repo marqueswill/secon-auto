@@ -9,9 +9,8 @@ import requests
 
 
 class DownloadNLsUsecase:
-    def __init__(self, pathing_gw: IPathingGateway, pdf_svc:IPdfService, siggo_svc: ISiggoService) -> None:
+    def __init__(self, pathing_gw: IPathingGateway, siggo_svc: ISiggoService) -> None:
         self.pathing_gw = pathing_gw
-        self.pdf_svc =pdf_svc
         self.siggo_svc = siggo_svc
 
     def executar(self, lista_nls: list[str]):

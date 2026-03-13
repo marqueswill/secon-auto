@@ -241,7 +241,7 @@ class PathingGateway(IPathingGateway):
         dir_path = os.path.join("C:", "Users", self.username, "Downloads")
         return dir_path
 
-    def get_caminho_download_nl(self):
+    def get_caminho_download_nl(self) -> str:
         caminho_home = os.path.expanduser('~')
         download_dir = os.path.join(caminho_home, 'Downloads', 'Automático')  
         return download_dir
