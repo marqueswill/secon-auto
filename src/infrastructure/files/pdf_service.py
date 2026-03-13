@@ -388,6 +388,36 @@ class PdfService(IPdfService):
 
         return resultado
 
+    def get_nls_baixadas(self, lista_nls: list[str]) -> list[str]:    
+        download_dir = self.pathing_gw.get_caminho_download_nl()
+        dados_bruto_nls: list[str] = []
+        
+        for nl in lista_nls:
+            caminho_pdf = os.path.join(download_dir, f"{nl}.pdf")
+            
+            # Evita que o programa quebre se o PDF não tiver sido baixado
+            if not os.path.exists(caminho_pdf):
+                print(f"Aviso: Arquivo não encontrado e será pulado - {caminho_pdf}")
+                continue 
+                
+            with open(caminho_pdf, "rb") as file:
+                reader = PdfReader(file)
+                texto_completo_pdf = ""
+                
+                for page in reader.pages:
+                    texto_extraido = page.extract_text()
+                    if texto_extraido:
+                        # Usa += para juntar o texto de todas as páginas
+                        texto_completo_pdf += texto_extraido + " " 
+                
+                # Aplica a limpeza no texto final (é mais eficiente fazer isso fora do loop das páginas)
+                texto_completo_pdf = re.sub(r"\s+", " ", texto_completo_pdf)
+                texto_completo_pdf = texto_completo_pdf.strip() 
+                
+                dados_bruto_nls.append(texto_completo_pdf)
+
+        return dados_bruto_nls
+
     def export_pages(self, pages: list[PageObject], path: str):
         try:
             # diretorio_de_saida = os.path.dirname(path)

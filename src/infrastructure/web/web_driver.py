@@ -16,9 +16,9 @@ class WebDriver(IWebDriverService):
 
     driver: SeleniumWebDriver
 
-    def inicializar(self, hidden=False):
+    def inicializar(self, hidden=False, download_dir=""):
         self.setup_pandas()
-        self.setup_driver(hidden)
+        self.setup_driver(hidden, download_dir)
 
     def finalizar(self):
         self.driver.quit()
@@ -30,7 +30,7 @@ class WebDriver(IWebDriverService):
         pd.set_option("display.width", 0)
         pd.set_option("display.expand_frame_repr", False)
 
-    def setup_driver(self, hidden=False):
+    def setup_driver(self, hidden=False, download_dir=""):
         options = webdriver.ChromeOptions()
         options.add_argument("--start-maximized")
         options.add_experimental_option("detach", True)
@@ -40,20 +40,18 @@ class WebDriver(IWebDriverService):
         # --- NOVA CONFIGURAÇÃO DE DOWNLOAD ---
         # Cria um caminho absoluto na pasta do seu projeto: ./Downloads/Automático/
 
-        caminho_home = os.path.expanduser('~')
-        download_dir = os.path.join(caminho_home, 'Downloads', 'Automático')
-        
         # Garante que a pasta exista antes do Chrome tentar baixar algo nela
-        os.makedirs(download_dir, exist_ok=True)
 
-        # Adiciona as preferências ao Chrome
-        prefs = {
-            "download.default_directory": download_dir,
-            "download.prompt_for_download": False,  # Impede a janela "Salvar como"
-            "download.directory_upgrade": True,
-            "safebrowsing.enabled": True,
-        }
-        options.add_experimental_option("prefs", prefs)
+        if download_dir == "":
+            os.makedirs(download_dir, exist_ok=True)
+            # Adiciona as preferências ao Chrome
+            prefs = {
+                "download.default_directory": download_dir,
+                "download.prompt_for_download": False,  # Impede a janela "Salvar como"
+                "download.directory_upgrade": True,
+                "safebrowsing.enabled": True,
+            }
+            options.add_experimental_option("prefs", prefs)
 
         if hidden:
             options.add_argument("--headless=new")

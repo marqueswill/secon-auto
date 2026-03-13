@@ -14,9 +14,9 @@ import requests
 class SiggoService(WebDriver, ISiggoService):
     """_summary_ Um driver especializado para o sistema SIGGO. Herda de WebDriver e adiciona lógicas específicas de negócio, como o fluxo de login no portal da fazenda, espera por elementos específicos de carregamento do sistema e métodos facilitadores para preencher campos e selecionar itens em menus dropdown."""
 
-    def inicializar(self, hidden=False):
+    def inicializar(self, hidden=False, download_dir = ""):
         self.setup_pandas()
-        self.setup_driver(hidden)
+        self.setup_driver(hidden, download_dir)
         if not hidden:
             self.esperar_login()
         else:

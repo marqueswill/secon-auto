@@ -41,3 +41,6 @@ class IPathingGateway(ABC):
 
     @abstractmethod
     def get_caminhos_pdfs_envio_driss(self) -> list[str]: ...
+
+    @abstractmethod
+    def get_caminho_download_nl(self): ...

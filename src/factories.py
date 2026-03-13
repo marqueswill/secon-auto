@@ -186,6 +186,8 @@ class UseCaseFactory:
 
     def create_download_nls_usecase(self) -> DownloadNLsUsecase:
         pathing_gw: IPathingGateway = PathingGateway()
+        pdf_svc: IPdfService = PdfService(pathing_gw)
+
         siggo_service: ISiggoService = SiggoService()
-        use_case: DownloadNLsUsecase = DownloadNLsUsecase(pathing_gw, siggo_service)
+        use_case: DownloadNLsUsecase = DownloadNLsUsecase(pathing_gw,pdf_svc, siggo_service)
         return use_case
