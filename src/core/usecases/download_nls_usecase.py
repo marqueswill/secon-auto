@@ -15,24 +15,8 @@ class DownloadNLsUsecase:
         self.siggo_svc = siggo_svc
 
     def executar(self, lista_nls: list[str]):
-        pdfs_nls = self.download_nls(lista_nls)
-        dados = self.parse_nls(pdfs_nls)
-        self.exportar_dados(dados)
-
-    def download_nls(self, lista_nls):
         download_dir = self.pathing_gw.get_caminho_download_nl()
-        # self.siggo_svc.inicializar(hidden=False, download_dir=download_dir)
+        self.siggo_svc.inicializar(hidden=False, download_dir=download_dir)
 
-        # for num_nl in lista_nls:
-        #     self.siggo_svc.download_nl(num_nl)
-
-        pdfs = self.pdf_svc.get_nls_baixadas(lista_nls)
-        return pdfs
-
-    def parse_nls(self, pdfs_nls): 
-        dados = []
-        for nl in pdfs_nls: 
-            print(nl)
-            break
-
-    def exportar_dados(self, dados): ...
+        for num_nl in lista_nls:
+            self.siggo_svc.download_nl(num_nl)
