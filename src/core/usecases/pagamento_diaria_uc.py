@@ -2,6 +2,7 @@ import os
 from pandas import DataFrame, Index
 import pandas as pd
 
+from src.core.parsers.nota_empenho_parser import NotaEmpenhoParser
 from src.core.entities.entities import CabecalhoNL, DadosPreenchimento, NotaLancamento
 from src.core.interfaces.i_pdf_service import IPdfService
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
@@ -13,11 +14,11 @@ class PagamentoDiariaUseCase:
         self,
         preenchimento_gw: IPreenchimentoGateway,
         pathing_gw: IPathingGateway,
-        pdf_svc: IPdfService,
+        parser_ne: NotaEmpenhoParser,
     ):
         self.preenchimento_gw = preenchimento_gw
         self.pathing_gw = pathing_gw
-        self.pdf_svc = pdf_svc
+        self.parser_ne = parser_ne
 
     def executar(self, arquivos_selecionados: list[str]):
         dados_preenchimento = self.gerar_nl_diarias(arquivos_selecionados)
@@ -52,7 +53,8 @@ class PagamentoDiariaUseCase:
                 )
             )
 
-            dados_extraidos = self.pdf_svc.parse_dados_diaria(caminho_pdf)
+            dados_extraidos = self.parser_ne.parser_diarias(caminho_pdf)
+            #TODO: passar lógica de dict para lógica da entidade NotaEmpenho
             processo = dados_extraidos["processo"]
             observacao = dados_extraidos["observacao"]
 

@@ -1,7 +1,9 @@
-class ParseNLsSiggoUseCase:
+class NotaLancamentoParser:
+
     def __init__(self) -> None:
         pass
 
+    
 # O executar recebe uma lista com as NLs para realizar o parse
 # Acessar a página de cada NL
 # Fazer parse dos dados diretamente da página para não ter que baixar o PDF

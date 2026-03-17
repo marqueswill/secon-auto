@@ -6,7 +6,7 @@ from src.core.interfaces.i_pdf_service import IPdfService
 from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
 from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
 from src.core.entities.entities import NotaLancamento
-
+from src.core.parsers.folha_pagamento_parser import FolhaPagamentoParser
 
 class PagamentoUseCase:
     """_summary_ Contém a lógica de negócio para o processamento dos dados das folhas pagamento. Processa os dados
@@ -17,11 +17,12 @@ class PagamentoUseCase:
         self,
         conferencia_gw: IConferenciaGateway,
         nl_folha_gw: ITemplateFolhaGateway,
-        pdf_svc: IPdfService,
+        parser_folha: FolhaPagamentoParser,
+
     ):
         self.conferencia_gw = conferencia_gw
         self.nl_folha_gw = nl_folha_gw
-        self.pdf_svc = pdf_svc
+        self.parser_folha = parser_folha
 
     def get_dados_conferencia(self, fundo, agrupar=True, adiantamento_ferias=False):
         cod_fundos = {
@@ -275,10 +276,10 @@ class PagamentoUseCase:
         return saldos
 
     def get_provisoes(self, fundo) -> dict[str, dict]:
-        return self.pdf_svc.parse_dados_provisoes(fundo)
+        return self.parser_folha.parse_dados_provisoes(fundo)
 
     def extrair_dados_relatorio(self, fundo_escolhido: str):
-        return self.pdf_svc.parse_relatorio_folha(fundo_escolhido)
+        return self.parser_folha.parse_relatorio_folha(fundo_escolhido)
 
     def gerar_nl_folha(
         self,

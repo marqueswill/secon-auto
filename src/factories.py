@@ -15,12 +15,16 @@ from src.core.usecases.baixa_diarias_uc import BaixaDiariasUseCase
 from src.core.usecases.pagamento_diaria_uc import PagamentoDiariaUseCase
 from src.core.usecases.emails_driss_uc import EmailsDrissUseCase
 from src.core.usecases.extrair_dados_r2000_uc import ExtrairDadosR2000UseCase
-from src.core.usecases.gerar_conferencia_uc import GerarConferenciaUseCase
+from src.core.usecases.conferencia_folha_uc import GerarConferenciaUseCase
 from src.core.usecases.pagamento_uc import PagamentoUseCase
 from src.core.usecases.preenchimento_folha_uc import PreenchimentoFolhaUseCase
 from src.core.usecases.preenchimento_nl_uc import PreenchimentoNLUseCase
 from src.core.usecases.cancelamento_rp_uc import CancelamentoRPUseCase
 from src.core.usecases.download_nls_uc import DownloadNLsUsecase
+
+# Parsers
+from src.core.parsers.folha_pagamento_parser import FolhaPagamentoParser
+from src.core.parsers.nota_empenho_parser import NotaEmpenhoParser
 
 # Importe as INTERFACES (opcional, mas bom para type hints)
 from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
@@ -60,14 +64,14 @@ class UseCaseFactory:
         else:
             excel_svc = ExcelServiceWin32(caminho_planilha_conferencia)
 
-        pdf_svc: IPdfService = PdfService(pathing_gw)
 
         conferencia_gw: IConferenciaGateway = ConferenciaGateway(
             pathing_gw=pathing_gw, excel_svc=excel_svc
         )
         nl_folha_gw: ITemplateFolhaGateway = TemplateFolhaGateway(pathing_gw)
 
-        use_case = PagamentoUseCase(conferencia_gw, nl_folha_gw, pdf_svc)
+        parser = FolhaPagamentoParser(pathing_gw)
+        use_case = PagamentoUseCase(conferencia_gw, nl_folha_gw, parser)
 
         return use_case
 
@@ -111,9 +115,9 @@ class UseCaseFactory:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
-        pdf_svc: IPdfService = PdfService(pathing_gw)
+        parser_ne: NotaEmpenhoParser = NotaEmpenhoParser(pathing_gw)
 
-        use_case = PagamentoDiariaUseCase(preenchedor_gw, pathing_gw, pdf_svc)
+        use_case = PagamentoDiariaUseCase(preenchedor_gw, pathing_gw, parser_ne)
         return use_case
 
     def create_extrair_dados_r2000_uc(

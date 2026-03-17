@@ -33,6 +33,7 @@ class BaixaDiariasUseCase:
         ]
         return nomes_planilhas
 
+    # TODO: passar pra infra
     def obter_dados(self, arquivo: str) -> DataFrame:
         caminho_planilha = (
             self.pathing_gw.get_caminho_raiz_secon()
