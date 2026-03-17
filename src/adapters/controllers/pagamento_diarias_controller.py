@@ -30,6 +30,8 @@ def PagamentoDiariaController(run=True):
         if run:
             pagamento_diaria_uc.executar(planilhas_selecionadas)
 
+        app_view.show_message("Processamento concluído.")
+        break
 
 if __name__ == "__main__":
     try:

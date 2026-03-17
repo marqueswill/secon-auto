@@ -42,7 +42,7 @@ class WebDriverService(IWebDriverService):
 
         # Garante que a pasta exista antes do Chrome tentar baixar algo nela
 
-        if download_dir == "":
+        if download_dir != "":
             os.makedirs(download_dir, exist_ok=True)
             # Adiciona as preferências ao Chrome
             prefs = {

@@ -1,14 +1,14 @@
 from pandas import DataFrame
 from src.core.entities.entities import DadosPreenchimento
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
-from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
 from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
 
 
 class PreenchimentoNLUseCase:
     def __init__(
         self,
-        nl_folha_gw: INLFolhaGateway,
+        nl_folha_gw: ITemplateFolhaGateway,
         preenchedor_gw: IPreenchimentoGateway,
         pathing_gw: IPathingGateway,
     ):

@@ -197,7 +197,7 @@ Vá até a camada de infraestrutura (`src/infrastructure`) para criar a implemen
 
 > **⚠️ Nota sobre a Estrutura de Pastas:** Atualmente, o projeto divide as implementações em duas categorias: 
 > -   **Serviços Externos:** Wrappers de bibliotecas (ex: `ExcelService`, `SiggoService`), localizados em pastas temáticas como `files` ou `web`.
-> -   **Lógica Interna:** Adaptadores de lógica de negócio (ex: `ConferenciaGateway`, `NLFolhaGateway`), localizados geralmente em `src/infrastructure/services`. 
+> -   **Lógica Interna:** Adaptadores de lógica de negócio (ex: `ConferenciaGateway`, `TemplateFolhaGateway`), localizados geralmente em `src/infrastructure/services`. 
 
 ## Definindo uma nova Factory
 

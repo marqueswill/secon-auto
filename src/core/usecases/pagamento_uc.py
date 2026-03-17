@@ -4,7 +4,7 @@ import pandas as pd
 from pandas import DataFrame
 from src.core.interfaces.i_pdf_service import IPdfService
 from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
-from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
 from src.core.entities.entities import NotaLancamento
 
 
@@ -16,7 +16,7 @@ class PagamentoUseCase:
     def __init__(
         self,
         conferencia_gw: IConferenciaGateway,
-        nl_folha_gw: INLFolhaGateway,
+        nl_folha_gw: ITemplateFolhaGateway,
         pdf_svc: IPdfService,
     ):
         self.conferencia_gw = conferencia_gw

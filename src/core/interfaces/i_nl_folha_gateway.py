@@ -5,7 +5,7 @@ from pandas import DataFrame
 from src.core.entities.entities import CabecalhoNL, TemplateNL, NotaLancamento
 
 
-class INLFolhaGateway(ABC):
+class ITemplateFolhaGateway(ABC):
     """_summary_ Gera uma NL para folha de pagamento a partir de um fundo e um template fornecido.
     Também interage com as planilhas de template das NLs de folha de pagamento.
     """

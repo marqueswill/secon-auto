@@ -6,7 +6,7 @@ from src.infrastructure.services.excel_service_win32 import ExcelServiceWin32
 from src.infrastructure.services.siggo_service import SiggoService
 
 from src.infrastructure.gateways.preenchimento_gateway import PreenchimentoGateway
-from src.infrastructure.gateways.nl_folha_gateway import NLFolhaGateway
+from src.infrastructure.gateways.nl_folha_gateway import TemplateFolhaGateway
 from src.infrastructure.gateways.pathing_gateway import PathingGateway
 from src.infrastructure.gateways.conferencia_gateway import ConferenciaGateway
 
@@ -25,7 +25,7 @@ from src.core.usecases.download_nls_uc import DownloadNLsUsecase
 # Importe as INTERFACES (opcional, mas bom para type hints)
 from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
 from src.core.interfaces.i_excel_service import IExcelService
-from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
 from src.core.interfaces.i_outlook_service import IOutlookService
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
 from src.core.interfaces.i_pdf_service import IPdfService
@@ -65,7 +65,7 @@ class UseCaseFactory:
         conferencia_gw: IConferenciaGateway = ConferenciaGateway(
             pathing_gw=pathing_gw, excel_svc=excel_svc
         )
-        nl_folha_gw: INLFolhaGateway = NLFolhaGateway(pathing_gw)
+        nl_folha_gw: ITemplateFolhaGateway = TemplateFolhaGateway(pathing_gw)
 
         use_case = PagamentoUseCase(conferencia_gw, nl_folha_gw, pdf_svc)
 
@@ -98,7 +98,7 @@ class UseCaseFactory:
 
     def create_preenchimento_nl_use_case(self) -> PreenchimentoNLUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
-        nl_folha_gw: INLFolhaGateway = NLFolhaGateway(pathing_gw)
+        nl_folha_gw: ITemplateFolhaGateway = TemplateFolhaGateway(pathing_gw)
 
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)

@@ -3,16 +3,16 @@ from pandas import DataFrame  # type: ignore
 import pandas as pd
 
 from src.config import *
-from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
 from src.core.entities.entities import CabecalhoNL, NotaLancamento, TemplateNL
 
 
-class NLFolhaGateway(INLFolhaGateway):
+class TemplateFolhaGateway(ITemplateFolhaGateway):
     """_summary_ Responsável por interagir com os arquivos de Templates das Notas de Lançamento (NL). Ele lista as abas disponíveis (templates), carrega os dados do cabeçalho da NL e os dados das linhas de lançamento para serem usados no preenchimento.
 
     Args:
-        INLFolhaGateway (_type_): _description_
+        ITemplateFolhaGateway (_type_): _description_
     """
 
     def __init__(self, pathing_gw: IPathingGateway):
@@ -26,7 +26,6 @@ class NLFolhaGateway(INLFolhaGateway):
 
         return nomes_nls
 
-    # TODO: verificação formato template
     def carregar_template_nl(
         self, caminho_completo: str, template: str, incluir_calculos=True
     ) -> TemplateNL | NotaLancamento | None:
@@ -58,7 +57,6 @@ class NLFolhaGateway(INLFolhaGateway):
         except Exception as e:
             raise Exception(e)
 
-    # TODO: verificação formato cabeçalho
     def carregar_cabecalho(self, caminho_completo: str, template: str) -> CabecalhoNL:
         cabecalho_dict = {}
 

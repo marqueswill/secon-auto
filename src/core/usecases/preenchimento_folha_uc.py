@@ -19,21 +19,23 @@ class PreenchimentoFolhaUseCase:
         self.preenchedor_gw = preenchedor_gw
         self.pathing_gw = pathing_gw
 
+    def executar(self, fundo: str, templates: list[str]) -> list[DadosPreenchimento]:
+        saldos = self.pagamento_uc.get_saldos(fundo)
+        provisoes = self.pagamento_uc.get_provisoes(fundo)
+        dados_gerados = self._gerar_dados_para_preenchimento(
+            fundo, templates, saldos, provisoes
+        )
+        self.preenchedor_gw.executar(dados_gerados)
+        return dados_gerados
+
     def get_nomes_templates(self, fundo: str):
         return self.pagamento_uc.nl_folha_gw.get_nomes_templates(fundo)
 
     def get_dados_preenchidos(self) -> list[DadosPreenchimento]:
         return self.preenchedor_gw.extrair_dados_preenchidos()
 
-    def executar(self, fundo: str, templates: list[str]) -> list[DadosPreenchimento]:
-        saldos = self.pagamento_uc.get_saldos(fundo)
-        provisoes = self.pagamento_uc.get_provisoes(fundo)
-        dados_gerados = self._gerar_dados_para_preenchimento(fundo, templates, saldos, provisoes)
-        self.preenchedor_gw.executar(dados_gerados)
-        return dados_gerados
-
     def _gerar_dados_para_preenchimento(
-        self, fundo: str, nomes_templates: list[str], saldos: dict, provisoes:dict
+        self, fundo: str, nomes_templates: list[str], saldos: dict, provisoes: dict
     ) -> list[DadosPreenchimento]:
         dados_preenchimento: list[DadosPreenchimento] = []
         caminho_template = self.pathing_gw.get_caminho_template(fundo)
@@ -45,12 +47,9 @@ class PreenchimentoFolhaUseCase:
             )
 
             nl = self.pagamento_uc.gerar_nl_folha(
-                caminho_template,
-                template,
-                saldos,
-                provisoes
+                caminho_template, template, saldos, provisoes
             )
-            
+
             if nl.esta_vazia():
                 continue
 
