@@ -2,9 +2,9 @@ from typing import Dict, List
 from pandas import DataFrame
 
 from src.core.entities.entities import DadosPreenchimento
-from src.core.usecases.pagamento_usecase import PagamentoUseCase
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.usecases.pagamento_uc import PagamentoUseCase
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
 class PreenchimentoFolhaUseCase:

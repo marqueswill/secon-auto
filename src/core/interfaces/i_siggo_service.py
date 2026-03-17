@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.core.gateways.i_web_driver_service import IWebDriverService
+from src.core.interfaces.i_web_driver_service import IWebDriverService
 
 
 class ISiggoService(IWebDriverService):

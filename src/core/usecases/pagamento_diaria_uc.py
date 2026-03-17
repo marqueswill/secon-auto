@@ -3,9 +3,9 @@ from pandas import DataFrame, Index
 import pandas as pd
 
 from src.core.entities.entities import CabecalhoNL, DadosPreenchimento, NotaLancamento
-from src.core.gateways.i_pdf_service import IPdfService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_pdf_service import IPdfService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
 
 
 class PagamentoDiariaUseCase:

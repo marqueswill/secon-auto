@@ -3,8 +3,8 @@ from pandas import DataFrame  # type: ignore
 import pandas as pd
 
 from src.config import *
-from src.core.gateways.i_nl_folha_gateway import INLFolhaGateway
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 from src.core.entities.entities import CabecalhoNL, NotaLancamento, TemplateNL
 
 

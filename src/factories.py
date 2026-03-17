@@ -1,36 +1,36 @@
 # Importe as classes CONCRETAS de infrastructure
-from src.infrastructure.email.outlook_service import OutlookService
-from src.infrastructure.files.pdf_service import PdfService
-from src.infrastructure.files.excel_service import ExcelService
-from src.infrastructure.files.excel_service_win32 import ExcelServiceWin32
+from src.infrastructure.services.outlook_service import OutlookService
+from src.infrastructure.services.pdf_service import PdfService
+from src.infrastructure.services.excel_service import ExcelService
+from src.infrastructure.services.excel_service_win32 import ExcelServiceWin32
+from src.infrastructure.services.siggo_service import SiggoService
 
-from src.infrastructure.services.preenchimento_gateway import PreenchimentoGateway
-from src.infrastructure.services.nl_folha_gateway import NLFolhaGateway
-from src.infrastructure.services.pathing_gateway import PathingGateway
-from src.infrastructure.services.conferencia_gateway import ConferenciaGateway
-from src.infrastructure.web.siggo_service import SiggoService
+from src.infrastructure.gateways.preenchimento_gateway import PreenchimentoGateway
+from src.infrastructure.gateways.nl_folha_gateway import NLFolhaGateway
+from src.infrastructure.gateways.pathing_gateway import PathingGateway
+from src.infrastructure.gateways.conferencia_gateway import ConferenciaGateway
 
 # Importe o Use Case de core
-from src.core.usecases.baixa_diarias_usecase import BaixaDiariasUseCase
-from src.core.usecases.pagamento_diaria_usecase import PagamentoDiariaUseCase
-from src.core.usecases.emails_driss_usecase import EmailsDrissUseCase
-from src.core.usecases.extrair_dados_r2000_usecase import ExtrairDadosR2000UseCase
-from src.core.usecases.gerar_conferencia_usecase import GerarConferenciaUseCase
-from src.core.usecases.pagamento_usecase import PagamentoUseCase
-from src.core.usecases.preenchimento_folha_usecase import PreenchimentoFolhaUseCase
-from src.core.usecases.preenchimento_nl_usecase import PreenchimentoNLUseCase
-from src.core.usecases.cancelamento_rp_usecase import CancelamentoRPUseCase
-from src.core.usecases.download_nls_usecase import DownloadNLsUsecase
+from src.core.usecases.baixa_diarias_uc import BaixaDiariasUseCase
+from src.core.usecases.pagamento_diaria_uc import PagamentoDiariaUseCase
+from src.core.usecases.emails_driss_uc import EmailsDrissUseCase
+from src.core.usecases.extrair_dados_r2000_uc import ExtrairDadosR2000UseCase
+from src.core.usecases.gerar_conferencia_uc import GerarConferenciaUseCase
+from src.core.usecases.pagamento_uc import PagamentoUseCase
+from src.core.usecases.preenchimento_folha_uc import PreenchimentoFolhaUseCase
+from src.core.usecases.preenchimento_nl_uc import PreenchimentoNLUseCase
+from src.core.usecases.cancelamento_rp_uc import CancelamentoRPUseCase
+from src.core.usecases.download_nls_uc import DownloadNLsUsecase
 
 # Importe as INTERFACES (opcional, mas bom para type hints)
-from src.core.gateways.i_conferencia_gateway import IConferenciaGateway
-from src.core.gateways.i_excel_service import IExcelService
-from src.core.gateways.i_nl_folha_gateway import INLFolhaGateway
-from src.core.gateways.i_outlook_service import IOutlookService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_pdf_service import IPdfService
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
-from src.core.gateways.i_siggo_service import ISiggoService
+from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
+from src.core.interfaces.i_excel_service import IExcelService
+from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_outlook_service import IOutlookService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_pdf_service import IPdfService
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_siggo_service import ISiggoService
 
 
 from src.config import ANO_ATUAL
@@ -107,7 +107,7 @@ class UseCaseFactory:
 
         return use_case
 
-    def criar_pagamento_diaria_usecase(self) -> PagamentoDiariaUseCase:
+    def create_pagamento_diaria_uc(self) -> PagamentoDiariaUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
@@ -116,7 +116,7 @@ class UseCaseFactory:
         use_case = PagamentoDiariaUseCase(preenchedor_gw, pathing_gw, pdf_svc)
         return use_case
 
-    def create_extrair_dados_r2000_usecase(
+    def create_extrair_dados_r2000_uc(
         self, pasta_mes_escolhido: str
     ) -> ExtrairDadosR2000UseCase:
         pathing_gw: IPathingGateway = PathingGateway()
@@ -138,7 +138,7 @@ class UseCaseFactory:
 
         return use_case
 
-    def create_exportar_valores_pagos_usecase(self) -> ExtrairDadosR2000UseCase:
+    def create_exportar_valores_pagos_uc(self) -> ExtrairDadosR2000UseCase:
         pathing_gw: IPathingGateway = PathingGateway()
         pdf_svc: IPdfService = PdfService(pathing_gw)
 
@@ -149,7 +149,7 @@ class UseCaseFactory:
 
         return use_case
 
-    def create_emails_driss_usecase(self) -> EmailsDrissUseCase:
+    def create_emails_driss_uc(self) -> EmailsDrissUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
         pdf_svc: IPdfService = PdfService(pathing_gw)
 
@@ -162,7 +162,7 @@ class UseCaseFactory:
         use_case = EmailsDrissUseCase(pathing_gw, pdf_svc, excel_svc, email_svc)
         return use_case
 
-    def create_cancelamento_rp_usecase(self) -> CancelamentoRPUseCase:
+    def create_cancelamento_rp_uc(self) -> CancelamentoRPUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
@@ -176,7 +176,7 @@ class UseCaseFactory:
         )
         return use_case
 
-    def create_baixa_diarias_usecase(self) -> BaixaDiariasUseCase:
+    def create_baixa_diarias_uc(self) -> BaixaDiariasUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
@@ -184,7 +184,7 @@ class UseCaseFactory:
         use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw)
         return use_case
 
-    def create_download_nls_usecase(self) -> DownloadNLsUsecase:
+    def create_download_nls_uc(self) -> DownloadNLsUsecase:
         pathing_gw: IPathingGateway = PathingGateway()
 
         siggo_service: ISiggoService = SiggoService()

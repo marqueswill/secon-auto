@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from src.infrastructure.web.web_driver import WebDriver
+from src.infrastructure.services.web_driver_service import WebDriverService
 
 
-class IOutlookService(WebDriver):
+class IOutlookService(WebDriverService):
 
     def send_email(
         self,

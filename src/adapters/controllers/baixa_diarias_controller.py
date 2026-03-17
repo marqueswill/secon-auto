@@ -1,11 +1,11 @@
 from src.factories import UseCaseFactory
-from src.infrastructure.cli.console_service import ConsoleService
+from src.infrastructure.services.console_service import ConsoleService
 
 
 def BaixaDiariasController(run=True, test=False):
     app_view = ConsoleService()
     factory = UseCaseFactory()
-    use_case = factory.create_baixa_diarias_usecase()
+    use_case = factory.create_baixa_diarias_uc()
 
     nomes_planilhas = use_case.listar_planilhas()
 

@@ -4,14 +4,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import TimeoutException
 
-from src.core.gateways.i_siggo_service import ISiggoService
-from src.infrastructure.web.web_driver import WebDriver
+from src.core.interfaces.i_siggo_service import ISiggoService
+from src.infrastructure.services.web_driver_service import WebDriverService
 from src.config import *
 
 import requests
 
 
-class SiggoService(WebDriver, ISiggoService):
+class SiggoService(WebDriverService, ISiggoService):
     """_summary_ Um driver especializado para o sistema SIGGO. Herda de WebDriver e adiciona lógicas específicas de negócio, como o fluxo de login no portal da fazenda, espera por elementos específicos de carregamento do sistema e métodos facilitadores para preencher campos e selecionar itens em menus dropdown."""
 
     def inicializar(self, hidden=False, download_dir = ""):

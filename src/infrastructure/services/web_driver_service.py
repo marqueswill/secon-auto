@@ -7,11 +7,11 @@ import pandas as pd
 import time
 import os
 
-from src.core.gateways.i_web_driver_service import IWebDriverService
+from src.core.interfaces.i_web_driver_service import IWebDriverService
 from src.config import *
 
 
-class WebDriver(IWebDriverService):
+class WebDriverService(IWebDriverService):
     """_summary_ Um wrapper genérico em torno do Selenium WebDriver. Configura as opções do navegador (Chrome), gerencia a sessão, manipula abas e janelas, e fornece métodos básicos de espera e navegação."""
 
     driver: SeleniumWebDriver

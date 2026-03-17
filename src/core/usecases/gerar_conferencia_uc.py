@@ -2,10 +2,10 @@ import pandas as pd
 from pandas import DataFrame
 from typing import cast
 from src.core.entities.entities import NotaLancamento
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_conferencia_gateway import IConferenciaGateway
-from src.core.usecases.pagamento_usecase import PagamentoUseCase
-from src.core.gateways.i_nl_folha_gateway import INLFolhaGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
+from src.core.usecases.pagamento_uc import PagamentoUseCase
+from src.core.interfaces.i_nl_folha_gateway import INLFolhaGateway
 
 
 class GerarConferenciaUseCase:

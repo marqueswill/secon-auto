@@ -1,9 +1,9 @@
 import time
 from pandas.io.common import file_path_to_url
-from src.core.gateways.i_pdf_service import IPdfService
+from src.core.interfaces.i_pdf_service import IPdfService
 from src.config import *
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_siggo_service import ISiggoService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_siggo_service import ISiggoService
 
 import requests
 

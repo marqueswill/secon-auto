@@ -1,9 +1,9 @@
 from pandas import DataFrame
 import pandas as pd
 from src.core.entities.entities import CabecalhoNL, DadosPreenchimento, NotaLancamento
-from src.core.gateways.i_excel_service import IExcelService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_excel_service import IExcelService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
 from src.config import *
 
 

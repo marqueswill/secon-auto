@@ -2,7 +2,7 @@ import re
 import sys
 from typing import Optional
 from src.config import *
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
 # TODO: ajustar métodos que recebem variáveis globais de src.config para receberem parâmetros no lugar

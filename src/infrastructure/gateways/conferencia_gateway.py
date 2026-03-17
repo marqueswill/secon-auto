@@ -5,9 +5,9 @@ from pandas import DataFrame
 from src.core.entities.entities import NotaLancamento
 from src.config import *
 
-from src.core.gateways.i_conferencia_gateway import IConferenciaGateway
-from src.core.gateways.i_excel_service import IExcelService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
+from src.core.interfaces.i_excel_service import IExcelService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
 class ConferenciaGateway(IConferenciaGateway):

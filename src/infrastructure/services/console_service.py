@@ -2,7 +2,7 @@ import os
 import sys
 import time
 
-from src.core.gateways.i_view import IView
+from src.core.interfaces.i_view import IView
 
 
 class ConsoleService(IView):

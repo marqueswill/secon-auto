@@ -7,8 +7,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
-from src.core.gateways.i_siggo_service import ISiggoService
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_siggo_service import ISiggoService
 from src.config import *
 
 from src.core.entities.entities import CabecalhoNL, DadosPreenchimento, NotaLancamento

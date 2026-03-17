@@ -3,10 +3,10 @@ import re
 from pandas import DataFrame
 from pypdf import PageObject
 
-from src.core.gateways.i_outlook_service import IOutlookService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_excel_service import IExcelService
-from src.core.gateways.i_pdf_service import IPdfService
+from src.core.interfaces.i_outlook_service import IOutlookService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_excel_service import IExcelService
+from src.core.interfaces.i_pdf_service import IPdfService
 
 from src.config import *
 

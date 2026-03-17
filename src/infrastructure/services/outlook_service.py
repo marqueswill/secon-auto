@@ -1,6 +1,6 @@
 import win32com.client as win32
 
-from src.core.gateways.i_outlook_service import IOutlookService
+from src.core.interfaces.i_outlook_service import IOutlookService
 
 
 class OutlookService(IOutlookService):

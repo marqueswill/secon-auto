@@ -6,7 +6,7 @@ from win32com.client import CDispatch
 
 from pandas import DataFrame
 
-from src.core.gateways.i_excel_service import IExcelService
+from src.core.interfaces.i_excel_service import IExcelService
 
 
 # Assumindo que esta é a nova estrutura para usar o win32com

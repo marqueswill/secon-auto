@@ -266,7 +266,7 @@ Abaixo, o exemplo corrigido e comentado de uma controller simples:
 def ExportarValoresPagosController():
     app_view = ConsoleService() # Service para interagir com usuário
     factory = UseCaseFactory()
-    use_case = factory.create_exportar_valores_pagos_usecase()
+    use_case = factory.create_exportar_valores_pagos_uc()
 
     # selecão mês de interesse
     while True:

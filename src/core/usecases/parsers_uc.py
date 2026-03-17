@@ -6,16 +6,14 @@ from pypdf import PdfReader, PdfWriter, PageObject
 from pandas import DataFrame, isna
 from datetime import datetime
 
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_pdf_service import IPdfService
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_pdf_service import IPdfService
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
-class PdfService(IPdfService):
-    """Responsável por ler e extrair dados de arquivos PDF. Possui métodos especializados para fazer o parse de diferentes tipos de documentos (Relatórios de Folha, Notas de Empenho de Diárias, guias de INSS) utilizando expressões regulares (Regex) e exportar páginas específicas de PDFs (caso do DRISS).
+class Parsers:
 
-    Args:
-        IPdfService (_type_): _description_
+    """Classe auxiliar que centraliza todos os parsers de PDF, HTML e outros arquivos
     """
 
     def __init__(self, pathing_gw: IPathingGateway):
@@ -417,17 +415,3 @@ class PdfService(IPdfService):
                 dados_bruto_nls.append(texto_completo_pdf)
 
         return dados_bruto_nls
-
-    def export_pages(self, pages: list[PageObject], path: str):
-        try:
-            # diretorio_de_saida = os.path.dirname(path)
-            # os.makedirs(diretorio_de_saida, exist_ok=True)
-            writer = PdfWriter()
-            for page in pages:
-                writer.add_page(page)
-
-            with open(path, "wb") as saida:
-                writer.write(saida)
-
-        except Exception as e:
-            raise Exception(f"Erro ao exportar páginas: {e}")
