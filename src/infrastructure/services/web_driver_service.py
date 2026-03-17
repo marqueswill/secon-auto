@@ -117,15 +117,17 @@ class WebDriverService(IWebDriverService):
         element = self.driver.find_element(By.XPATH, xpath)
         return element.text
 
-    def get_table_by_xpath(self, xpath:str) -> DataFrame:
+    def get_table_by_xpath(self, xpath:str) -> DataFrame | None:
         # 1. Locate the table element
         table_element = self.driver.find_element(By.XPATH, xpath)
         
         # 2. Get the HTML of the table
         table_html = table_element.get_attribute('outerHTML')
-        
+        if table_html:
+            df = pd.read_html(table_html)[0]
+            return df
+        else:
+            return None
+
         # 3. Use Pandas to read the HTML string
         # read_html returns a list of DataFrames; we take the first one [0]
-        df = pd.read_html(table_html)[0]
-        
-        return df
