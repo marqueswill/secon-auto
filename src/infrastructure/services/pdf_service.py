@@ -51,10 +51,10 @@ class PdfService(IPdfService):
 
         stream_em_memoria = io.BytesIO(stream_bytes)
 
-        paginas_por_empresa = {}
         reader = PdfReader(stream_em_memoria)
         paginas = reader.pages[:-1]
         return paginas
+        paginas_por_empresa = {}
         # Identifica a empresa em cada página e agrupa as páginas por empresa
         for page in reader.pages[:-1]:
             text = page.extract_text().replace("\n", " ").replace("  ", " ").strip()

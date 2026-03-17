@@ -25,13 +25,29 @@ class EmailsDrissUseCase:
         self.email_svc = email_svc
 
     def executar(self):
+        pdfs_por_empresa = self.get_pdf_por_empresa()
+        emails_por_empresa = self.encontrar_emails_para_enviar(pdfs_por_empresa)
+
+        self.exportar_pdfs_driss(pdfs_por_empresa)
+        self.preparar_envio_emails_driss(pdfs_por_empresa, emails_por_empresa)
+
+    def get_pdf_por_empresa(self):
         caminho_pdf = self.pathing_gw.get_caminho_pdf_driss()
-        pdfs_para_enviar = self.pdf_svc.parse_pdf_driss(caminho_pdf)
-        emails_para_enviar = self.encontrar_emails_para_enviar(pdfs_para_enviar)
+        paginas = self.pdf_svc.get_pdfs_driss(caminho_pdf)
+        paginas_por_empresa = {}
+        # Identifica a empresa em cada página e agrupa as páginas por empresa
+        for page in paginas:
+            text = page.extract_text().replace("\n", " ").replace("  ", " ").strip()
+            # nome da empresa sempre vem nesse padrão: relativo ao ISS proveniente dos serviços prestados por WINDOC GESTÃO DE DOCUMENTOS LTDA, com endereço:
+            padrao = r"relativo ao ISS proveniente dos serviços prestados por (.*?), com endereço:"
+            nome_empresa_match = re.search(padrao, text)
+            if nome_empresa_match:
+                nome_empresa = nome_empresa_match.group(1).upper().strip()
+                paginas_por_empresa[nome_empresa] = paginas_por_empresa.get(
+                    nome_empresa, []
+                ) + [page]
 
-        self.exportar_pdfs_driss(pdfs_para_enviar)
-        self.preparar_envio_emails_driss(pdfs_para_enviar, emails_para_enviar)
-
+        return paginas_por_empresa
 
     def preparar_envio_emails_driss(
         self,
@@ -65,13 +81,13 @@ class EmailsDrissUseCase:
                 print(f"Preparando envio para '{email_empresa}'")
 
                 self.email_svc.send_email(
+                    # mail_from=mail_from,
                     mail_to=email_empresa,
                     inbox=inbox_mail,
                     subject=subject,
                     html=html,
                     body=body,
                     attachments=attachments,
-                    # mail_from=mail_from,
                     send=False,
                     display=True,
                 )
@@ -112,24 +128,23 @@ class EmailsDrissUseCase:
 
     def encontrar_emails_empresa(self, nome_empresa_pdf: str) -> list[str]:
         planilha_emails = self.excel_svc.get_sheet(
-            sheet_name="E-MAIL", as_dataframe=True, columns="B:C"
+            sheet_name="E-MAIL", as_dataframe=True, columns=["EMPRESA", "E-MAIL"]
         )
-        nome_pdf_limpo = nome_empresa_pdf.upper().strip()
+        
 
-        emails_encontrados = []
+        emails_planilha = []
         for i, row in planilha_emails.iterrows():
             # TODO: melhorar essa lógica de sigla/abreviação
             nome_empresa_planilha = str(row["EMPRESA"]).upper().strip()
-            inicio_nome_empresa = nome_empresa_planilha.split()[0]
-            if nome_pdf_limpo == nome_empresa_planilha or nome_pdf_limpo.startswith(
-                inicio_nome_empresa
-            ):
+            # inicio_nome_empresa = nome_empresa_planilha.split()[0]
+            if nome_empresa_pdf == nome_empresa_planilha:
                 emails_planilha = [
                     email
                     for email in str(row["E-MAIL"]).strip().replace(" ", "").split(";")
                     if email != ""
                 ]
-                return emails_planilha
+                break
+        return emails_planilha
 
     def gerar_mensagem(self) -> tuple[str, str]:
         hora = datetime.now().hour

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from pandas import DataFrame
 from selenium.webdriver.remote.webdriver import WebDriver as SeleniumWebDriver
 
 
@@ -8,7 +8,7 @@ class IWebDriverService(ABC):
     def get_driver(self) -> SeleniumWebDriver: ...
 
     @abstractmethod
-    def inicializar(self, hidden=False, download_dir= ""): ...
+    def inicializar(self, hidden=False, download_dir=""): ...
 
     @abstractmethod
     def finalizar(self): ...
@@ -36,3 +36,9 @@ class IWebDriverService(ABC):
 
     @abstractmethod
     def esperar_carregamento(self, xpath: str, timeout=60): ...
+
+    @abstractmethod
+    def get_element_by_xpath(self, xpath: str) -> str: ...
+
+    @abstractmethod
+    def get_table_by_xpath(self, xpath: str) -> DataFrame: ...

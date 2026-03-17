@@ -7,12 +7,12 @@ class IOutlookService(WebDriverService):
 
     def send_email(
         self,
-        mail_from,
         mail_to,
         subject,
         body,
         html,
-        attachments,
+        attachments=None,
+        mail_from=None,
         inbox=None,
         send=True,
         display=False,
