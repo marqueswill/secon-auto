@@ -184,8 +184,8 @@ class UseCaseFactory:
         pathing_gw: IPathingGateway = PathingGateway()
         siggo_service: ISiggoService = SiggoService()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
-
-        use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw)
+        excel_svc = ExcelServiceWin32()
+        use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw, excel_svc)
         return use_case
 
     def create_download_nls_uc(self) -> DownloadNLsUsecase:

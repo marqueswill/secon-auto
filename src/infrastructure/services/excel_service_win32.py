@@ -20,9 +20,10 @@ class ExcelServiceWin32(IExcelService):
     # excel: Optional[CDispatch] = None
     # workbook: Optional[CDispatch] = None
 
-    def __init__(self, caminho_arquivo: str):
-        self.caminho_arquivo = caminho_arquivo
-        self.__enter__()
+    def __init__(self, caminho_arquivo: str | None = None):
+        if caminho_arquivo is not None:
+            self.caminho_arquivo = caminho_arquivo
+            self.__enter__()
 
     def __enter__(self):
         """Inicializa e abre o Excel e o Workbook."""
@@ -188,6 +189,28 @@ class ExcelServiceWin32(IExcelService):
         df = pd.DataFrame(rows, columns=pd.Index(headers))
 
         return df
+
+    # TODO: testar pra ver se funfa
+    @staticmethod
+    def read_table(
+        file_path: str, sheet_name: str, header_row=1, columns=None
+    ) -> DataFrame:
+        """
+        Lê uma aba do Excel e retorna um DataFrame.
+        Abre e fecha a instância do Excel automaticamente de forma segura.
+        """
+        with ExcelServiceWin32(file_path) as excel_svc:
+            df = excel_svc.get_sheet(
+                sheet_name=sheet_name,
+                as_dataframe=True,
+                header_row=header_row,
+                columns=columns,
+            )
+            return df
+
+    @staticmethod
+    def read_csv(caminho_csv) -> DataFrame:
+        return pd.read_csv(caminho_csv)
 
     def delete_sheet(self, sheet_name: str) -> None:
         """

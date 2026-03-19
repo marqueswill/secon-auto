@@ -13,9 +13,11 @@ class BaixaDiariasUseCase:
         self,
         pathing_gw: IPathingGateway,
         preenchimento_gw: IPreenchimentoGateway,
+        excel_svc: IExcelService,
     ):
         self.pathing_gw = pathing_gw
         self.preenchimento_gw = preenchimento_gw
+        self.excel_svc = excel_svc
 
     def executar(self, arquivos: list[str]):
         for arquivo in arquivos:
@@ -35,13 +37,11 @@ class BaixaDiariasUseCase:
 
     # TODO: passar pra infra
     def obter_dados(self, arquivo: str) -> DataFrame:
-        caminho_planilha = (
+        caminho_csv = (
             self.pathing_gw.get_caminho_raiz_secon()
             + f"SECON - General\\ANO_ATUAL\\BAIXA_DIARIAS\\{arquivo}"
         )
-
-        df = pd.read_csv(caminho_planilha)
-        return df
+        return self.excel_svc.read_csv(caminho_csv)
 
     def gerar_nls_baixa(self, dados_baixa: DataFrame) -> list[DadosPreenchimento]:
 
@@ -65,7 +65,7 @@ class BaixaDiariasUseCase:
             )  # type: ignore
 
             nl_df["VALOR"] = nl_df["VALOR"].astype(str).str.replace(",", ".")
-            
+
             nl_df["EVENTO"] = evento_baixa
             nl_df["CLASS. CONT"] = class_cont
             nl_df["CLASS. ORC"] = "."
