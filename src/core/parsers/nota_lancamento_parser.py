@@ -1,48 +1,83 @@
 from src.core.entities.entities import NotaLancamento
 from src.core.interfaces.i_siggo_service import ISiggoService
-from src.core.interfaces.i_excel_service import IExcelService
 from src.config import ANO_ATUAL
-
+import pandas as pd
 
 class NotaLancamentoParser:
 
-    def __init__(self, siggo_svc: ISiggoService, excel_svc: IExcelService) -> None:
+    def __init__(self, siggo_svc: ISiggoService) -> None:
         self.siggo_svc = siggo_svc
-        self.excel_svc = excel_svc
 
-    # O executar recebe uma lista com as NLs para realizar o parse
-    def executar(self):
-        lista_nls = self.get_lista_nls()
-        todos_dados_nl = []
-        for num_nl in lista_nls:
-            dados = self.parse_pagina_nl(num_nl)
-            todos_dados_nl.append(dados)
+    def parse(self, nls: list[str]) -> list[NotaLancamento] | None:
+        def limpar_moeda(valor):
+            if pd.isna(valor) or valor == "":
+                return 0.0
+            
+            valor = str(valor).strip()
+            
+            # Se NÃO tem vírgula, dividimos por 100 para criar as casas decimais
+            if "," not in valor:
+                try:
+                    valor_limpo = valor.replace(".", "")
+                    return float(valor_limpo) / 100
+                except ValueError:
+                    return 0.0
 
-        for tabela in todos_dados_nl:
-            self.excel_svc.exportar_para_planilha(tabela, tabela.nome)
+            valor = valor.replace(".", "")  # Remove separador de milhar
+            valor = valor.replace(",", ".")  # Troca decimal pt-BR para padrão Python
+            
+            try:
+                return float(valor)
+            except ValueError:
+                return 0.0
 
-    def get_lista_nls(self) -> list[str]:
-        df = self.excel_svc.get_sheet("lista_nls")
-        return df["NUM_NL"].astype(str).tolist()
+        MAPEAMENTO_COLUNAS = {
+            "Evento": "EVENTO",
+            "Inscrição": "INSCRIÇÃO",
+            "Class. Contábil": "CLASS. CONT",
+            "Class. Orçamentaria": "CLASS. ORC",
+            "Fonte de Recurso": "FONTE",
+            "Valor": "VALOR",
+        }
 
-    def parse_pagina_nl(self, num_nl):
-        # Acessar a página de cada NL
-        url = f"https://siggo.fazenda.df.gov.br/{ANO_ATUAL}/afc/lista-nota-lancamento/detalhar/20101/1/{num_nl}"
-        self.siggo_svc.acessar_link(url)
+        SUBSTITUICOES_FONTE = {
+            "1500.1": "100000000",
+            "1501.1001": "100100000",
+        }
 
-        xpath_tabela_nl = "/html/body/app-root/lib-layout/div/app-nota-lancamento-detalhar/div/div/div[2]/form/div/div[3]/div/div/p-table/div/div/table"
-        tabela_extraida = self.siggo_svc.get_table_by_xpath(xpath_tabela_nl)
+        try:
+            self.siggo_svc.inicializar()
+            dados_extraidos: list[NotaLancamento] = []
+            for num_nl in nls:
+                print(f"Extraindo dados de {num_nl}")
+                url = f"https://siggo.fazenda.df.gov.br/{ANO_ATUAL}/afc/lista-nota-lancamento/detalhar/20101/1/{num_nl}"
+                self.siggo_svc.acessar_link(url)
 
-        if tabela_extraida is not None:
-            return NotaLancamento(tabela_extraida, num_nl)
-        else:
-            raise Exception("Tabela da NL foi não encontrada na página.")
+                xpath_tabela_nl = "/html/body/app-root/lib-layout/div/app-nota-lancamento-detalhar/div/div/div[2]/form/div/div[3]/div/div/p-table/div/div/table"
+                tabela_extraida = self.siggo_svc.get_table_by_xpath(xpath_tabela_nl)
+                if tabela_extraida is not None:
+                    tabela_extraida = tabela_extraida.rename(columns=MAPEAMENTO_COLUNAS)
+                    tabela_extraida.columns = [c.strip() for c in tabela_extraida.columns]
+                    tabela_extraida["FONTE"] = (
+                        tabela_extraida["FONTE"]
+                        .astype(str)
+                        .str.strip()
+                        .replace(SUBSTITUICOES_FONTE)
+                    )
+                    tabela_extraida["VALOR"] = tabela_extraida["VALOR"].apply(limpar_moeda)
+                    nota_lancamento = NotaLancamento(tabela_extraida, num_nl)
+                    dados_extraidos.append(nota_lancamento)
+                else:
+                    raise Exception("Tabela da NL foi não encontrada na página.")
+            return dados_extraidos
+        except:
+            print(f"Ocorreu um erro durante o parse das NLs")
+        finally:
+            self.siggo_svc.finalizar()
 
-        # Fazer parse dos dados diretamente da página para não ter que baixar o PDF
-        # Encapsular os dados en entidades (expandir entidades atuais)
-        # Exportar tudo para um excel (cada NL fica em uma aba)
 
         # INFORMAÇÕES PARA EXTRAIR:
+        # Tabela com dados lançamento: "/html/body/app-root/lib-layout/div/app-nota-lancamento-detalhar/div/div/div[2]/form/div/div[3]/div/div/p-table/div/div/table"
         # Data de Emissão: /html/body/app-root/lib-layout/div/app-nota-lancamento-detalhar/div/div/div[2]/form/div/div[1]/div/div[1]/input
         # Data de Lançamento:
         # Lançado em:
@@ -56,4 +91,3 @@ class NotaLancamentoParser:
         # Processo:
         # Histórico:
         # Observação:
-        #

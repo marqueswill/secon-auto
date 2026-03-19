@@ -7,7 +7,7 @@ import pandas as pd
 from pandas import DataFrame
 import time
 import os
-
+from io import StringIO
 from src.core.interfaces.i_web_driver_service import IWebDriverService
 from src.config import *
 
@@ -22,7 +22,8 @@ class WebDriverService(IWebDriverService):
         self.setup_driver(hidden, download_dir)
 
     def finalizar(self):
-        self.driver.quit()
+        if self.driver:
+            self.driver.quit()
 
     def setup_pandas(self):
         pd.set_option("display.max_rows", None)
@@ -124,7 +125,7 @@ class WebDriverService(IWebDriverService):
         # 2. Get the HTML of the table
         table_html = table_element.get_attribute('outerHTML')
         if table_html:
-            df = pd.read_html(table_html)[0]
+            df = pd.read_html(StringIO(table_html))[0]
             return df
         else:
             return None

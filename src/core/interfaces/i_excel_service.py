@@ -34,7 +34,7 @@ class IExcelService(ABC):
         sheet_name: str,
         start_column="A",
         start_line="1",
-        title = "",
+        title="",
         clear=False,
         sum_numeric=False,
         fit_columns=True,
@@ -64,3 +64,8 @@ class IExcelService(ABC):
         column: str = "A",
         line: str = "1",
     ): ...
+
+    def export_table(table: DataFrame, sheet_name: str): ...
+    def read_table(
+        file_path: str, sheet_name: str, header_row=1, columns=None
+    ) -> DataFrame: ...

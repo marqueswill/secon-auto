@@ -21,10 +21,11 @@ from src.core.usecases.preenchimento_folha_uc import PreenchimentoFolhaUseCase
 from src.core.usecases.preenchimento_nl_uc import PreenchimentoNLUseCase
 from src.core.usecases.cancelamento_rp_uc import CancelamentoRPUseCase
 from src.core.usecases.download_nls_uc import DownloadNLsUsecase
-
+from src.core.usecases.exportar_dados_folha_uc import ExportarDadosFolhaUseCase
 # Parsers
 from src.core.parsers.folha_pagamento_parser import FolhaPagamentoParser
 from src.core.parsers.nota_empenho_parser import NotaEmpenhoParser
+from src.core.parsers.nota_lancamento_parser import NotaLancamentoParser
 
 # Importe as INTERFACES (opcional, mas bom para type hints)
 from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
@@ -93,8 +94,8 @@ class UseCaseFactory:
             fundo, win32=True
         )
 
-        siggo_service: ISiggoService = SiggoService()
-        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
+        siggo_svc: ISiggoService = SiggoService()
+        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_svc)
 
         use_case = PreenchimentoFolhaUseCase(pagamento_uc, preenchedor_gw, pathing_gw)
 
@@ -104,8 +105,8 @@ class UseCaseFactory:
         pathing_gw: IPathingGateway = PathingGateway()
         nl_folha_gw: ITemplateFolhaGateway = TemplateFolhaGateway(pathing_gw)
 
-        siggo_service: ISiggoService = SiggoService()
-        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
+        siggo_svc: ISiggoService = SiggoService()
+        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_svc)
 
         use_case = PreenchimentoNLUseCase(nl_folha_gw, preenchedor_gw, pathing_gw)
 
@@ -113,8 +114,8 @@ class UseCaseFactory:
 
     def create_pagamento_diaria_uc(self) -> PagamentoDiariaUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
-        siggo_service: ISiggoService = SiggoService()
-        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
+        siggo_svc: ISiggoService = SiggoService()
+        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_svc)
         parser_ne: NotaEmpenhoParser = NotaEmpenhoParser(pathing_gw)
 
         use_case = PagamentoDiariaUseCase(preenchedor_gw, pathing_gw, parser_ne)
@@ -168,8 +169,8 @@ class UseCaseFactory:
 
     def create_cancelamento_rp_uc(self) -> CancelamentoRPUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
-        siggo_service: ISiggoService = SiggoService()
-        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
+        siggo_svc: ISiggoService = SiggoService()
+        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_svc)
         caminho_planilha = (
             pathing_gw.get_caminho_raiz_secon()
             + f"SECON - General\\ANO_ATUAL\\CANCELAMENTO_RP\\CANCELAMENTO_RP_{ANO_ATUAL}.xlsx"
@@ -182,15 +183,21 @@ class UseCaseFactory:
 
     def create_baixa_diarias_uc(self) -> BaixaDiariasUseCase:
         pathing_gw: IPathingGateway = PathingGateway()
-        siggo_service: ISiggoService = SiggoService()
-        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_service)
+        siggo_svc: ISiggoService = SiggoService()
+        preenchedor_gw: IPreenchimentoGateway = PreenchimentoGateway(siggo_svc)
         excel_svc = ExcelServiceWin32()
         use_case: BaixaDiariasUseCase = BaixaDiariasUseCase(pathing_gw, preenchedor_gw, excel_svc)
         return use_case
 
     def create_download_nls_uc(self) -> DownloadNLsUsecase:
         pathing_gw: IPathingGateway = PathingGateway()
+        siggo_svc: ISiggoService = SiggoService()
+        use_case: DownloadNLsUsecase = DownloadNLsUsecase(pathing_gw, siggo_svc)
+        return use_case
 
-        siggo_service: ISiggoService = SiggoService()
-        use_case: DownloadNLsUsecase = DownloadNLsUsecase(pathing_gw, siggo_service)
+    def exportar_dados_folha_uc(self) -> ExportarDadosFolhaUseCase:
+        siggo_svc: ISiggoService = SiggoService()
+        excel_svc: IExcelService = ExcelServiceWin32()
+        parser: NotaLancamentoParser = NotaLancamentoParser(siggo_svc)
+        use_case: ExportarDadosFolhaUseCase = ExportarDadosFolhaUseCase(parser, excel_svc)
         return use_case

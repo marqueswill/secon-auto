@@ -209,6 +209,11 @@ class ExcelServiceWin32(IExcelService):
             return df
 
     @staticmethod
+    def export_table(table: DataFrame, sheet_name: str):
+        with ExcelServiceWin32(file_path) as excel_svc:
+            excel_svc.exportar_para_planilha(table, sheet_name, clear=True)
+
+    @staticmethod
     def read_csv(caminho_csv) -> DataFrame:
         return pd.read_csv(caminho_csv)
 
