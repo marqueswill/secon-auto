@@ -66,6 +66,7 @@ class GerarConferenciaUseCase:
         )
         total_liquido = total_proventos - total_descontos
         total_saldo = proventos_folha["SALDO"].sum()
+        total_negativos = proventos_folha.loc[proventos_folha["SALDO"] < 0, "SALDO"].sum()
 
         totais = DataFrame(
             {
@@ -83,7 +84,7 @@ class GerarConferenciaUseCase:
                     total_liquido,
                     None,  # TODO: tirar essa gambiarra aqui
                     total_saldo,
-                    total_liquidado,
+                    total_liquidado + total_negativos,
                 ],
             }
         )
