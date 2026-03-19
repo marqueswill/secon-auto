@@ -1,6 +1,6 @@
 from pandas import DataFrame
-from dataclasses import dataclass, asdict
-from typing import Optional
+from dataclasses import dataclass, asdict, field
+from typing import Optional, List
 
 
 @dataclass
@@ -92,3 +92,38 @@ class CabecalhoNL:
 class DadosPreenchimento:
     lancamento: NotaLancamento
     cabecalho: CabecalhoNL
+
+@dataclass
+class ItemEmpenho:
+    """Representa uma linha individual de dados dentro de uma Nota de Empenho."""
+    nune: str
+    credor: str
+    fonte: str
+    valor: float
+    natureza: str
+    subitem: str
+
+@dataclass
+class NotaEmpenho:
+    """Entidade que agrupa os dados de um processo de empenho (ex: Diárias)."""
+    processo: str
+    dados: List[ItemEmpenho] = field(default_factory=list)
+    observacao: str = ""
+
+    def para_dataframe(self) -> DataFrame:
+        """Converte os itens de empenho em um DataFrame para processamento ou exibição."""
+        import pandas as pd
+        if not self.dados:
+            return pd.DataFrame()
+        
+        # Converte a lista de objetos ItemEmpenho em uma lista de dicionários
+        dados_dict = [item.__dict__ for item in self.dados]
+        return pd.DataFrame(dados_dict)
+
+    def calcular_valor_total(self) -> float:
+        """Soma o valor de todos os itens da NE."""
+        return sum(item.valor for item in self.dados if item.valor)
+
+    def esta_vazia(self) -> bool:
+        """Verifica se existem dados de empenho."""
+        return len(self.dados) == 0

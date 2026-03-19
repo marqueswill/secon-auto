@@ -1,4 +1,4 @@
-from src.infrastructure.cli.console_service import ConsoleService
+from src.infrastructure.services.console_service import ConsoleService
 from src.factories import UseCaseFactory
 
 
@@ -7,7 +7,7 @@ def PagamentoDiariaController(run=True):
     app_view.clear_console()
 
     factory = UseCaseFactory()
-    pagamento_diaria_uc = factory.criar_pagamento_diaria_usecase()
+    pagamento_diaria_uc = factory.create_pagamento_diaria_uc()
     nomes_planilhas = pagamento_diaria_uc.listar_planilhas()
 
     while True:
@@ -30,6 +30,8 @@ def PagamentoDiariaController(run=True):
         if run:
             pagamento_diaria_uc.executar(planilhas_selecionadas)
 
+        app_view.show_message("Processamento concluído.")
+        break
 
 if __name__ == "__main__":
     try:

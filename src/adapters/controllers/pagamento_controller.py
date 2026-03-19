@@ -2,7 +2,7 @@ import sys
 
 
 from src.factories import UseCaseFactory
-from src.infrastructure.cli.console_service import ConsoleService
+from src.infrastructure.services.console_service import ConsoleService
 from src.config import *
 
 

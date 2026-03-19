@@ -11,17 +11,17 @@ from src.infrastructure.services.conferencia_gateway import ConferenciaGateway
 
 
 # Interfaces
-from src.core.gateways.i_nl_folha_gateway import INLFolhaGateway
-from src.core.gateways.i_pathing_gateway import IPathingGateway
-from src.core.gateways.i_excel_service import IExcelService
-from src.core.gateways.i_conferencia_gateway import IConferenciaGateway
-from src.core.gateways.i_preenchimento_gateway import IPreenchimentoGateway
-from src.core.gateways.i_siggo_service import ISiggoService
+from src.core.interfaces.i_nl_folha_gateway import ITemplateFolhaGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_excel_service import IExcelService
+from src.core.interfaces.i_conferencia_gateway import IConferenciaGateway
+from src.core.interfaces.i_preenchimento_gateway import IPreenchimentoGateway
+from src.core.interfaces.i_siggo_service import ISiggoService
 
 # Mocks
 from tests.mocks.conferencia_gateway_mock import ConferenciaGatewayMock
 from tests.mocks.excel_service_mock import ExcelServiceMock
-from tests.mocks.nl_folha_gateway_mock import NLFolhaGatewayMock
+from tests.mocks.nl_folha_gateway_mock import TemplateFolhaGatewayMock
 from tests.mocks.pathing_gateway_mock import PathingGatewayMock
 from tests.mocks.preenchimento_gateway_mock import PreenchimentoGatewayMock
 from tests.mocks.siggo_service_mock import SiggoServiceMock
@@ -45,7 +45,7 @@ class UseCaseFactoryMock:
         conferencia_gw: ConferenciaGatewayMock = ConferenciaGatewayMock(
             pathing_gw=pathing_gw, excel_svc=excel_svc
         )
-        nl_folha_gw: NLFolhaGatewayMock = NLFolhaGatewayMock(pathing_gw)
+        nl_folha_gw: TemplateFolhaGatewayMock = TemplateFolhaGatewayMock(pathing_gw)
 
         use_case = PagamentoUseCase(conferencia_gw, nl_folha_gw)
 
@@ -72,7 +72,7 @@ class UseCaseFactoryMock:
 
     def create_preenchimento_nl_use_case(self) -> PreenchimentoNLUseCase:
         pathing_gw: IPathingGateway = PathingGatewayMock()
-        nl_folha_gw: INLFolhaGateway = NLFolhaGatewayMock(pathing_gw)
+        nl_folha_gw: ITemplateFolhaGateway = TemplateFolhaGatewayMock(pathing_gw)
 
         siggo_service: ISiggoService = SiggoServiceMock()
         preenchedor_gw: IPreenchimentoGateway = PreenchimentoGatewayMock(siggo_service)

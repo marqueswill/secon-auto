@@ -1,5 +1,5 @@
 from src.config import *
-from src.core.gateways.i_pathing_gateway import IPathingGateway
+from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
 class PathingGatewayMock(IPathingGateway):

@@ -1,4 +1,4 @@
-from src.infrastructure.cli.console_service import ConsoleService
+from src.infrastructure.services.console_service import ConsoleService
 from src.factories import UseCaseFactory
 
 
@@ -6,7 +6,7 @@ def EmailsDrissController(run=True, test=False):
     app_view = ConsoleService()
 
     factory = UseCaseFactory()
-    use_case = factory.create_emails_driss_usecase()
+    use_case = factory.create_emails_driss_uc()
     use_case.executar()
 
     app_view.show_message("Processamento concluído.")

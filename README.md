@@ -197,7 +197,7 @@ Vá até a camada de infraestrutura (`src/infrastructure`) para criar a implemen
 
 > **⚠️ Nota sobre a Estrutura de Pastas:** Atualmente, o projeto divide as implementações em duas categorias: 
 > -   **Serviços Externos:** Wrappers de bibliotecas (ex: `ExcelService`, `SiggoService`), localizados em pastas temáticas como `files` ou `web`.
-> -   **Lógica Interna:** Adaptadores de lógica de negócio (ex: `ConferenciaGateway`, `NLFolhaGateway`), localizados geralmente em `src/infrastructure/services`. 
+> -   **Lógica Interna:** Adaptadores de lógica de negócio (ex: `ConferenciaGateway`, `TemplateFolhaGateway`), localizados geralmente em `src/infrastructure/services`. 
 
 ## Definindo uma nova Factory
 
@@ -266,7 +266,7 @@ Abaixo, o exemplo corrigido e comentado de uma controller simples:
 def ExportarValoresPagosController():
     app_view = ConsoleService() # Service para interagir com usuário
     factory = UseCaseFactory()
-    use_case = factory.create_exportar_valores_pagos_usecase()
+    use_case = factory.create_exportar_valores_pagos_uc()
 
     # selecão mês de interesse
     while True:
