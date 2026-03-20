@@ -209,9 +209,7 @@ class ExtrairDadosR2000UseCase:
 
         return df_r2010_1, df_r2010_2
 
-    def exportar_planilhas_r2000(self, df_r2010_1: DataFrame, df_r2010_2: DataFrame):
-        #TODO: reset das formatações condicionais
-        
+    def exportar_planilhas_r2000(self, df_r2010_1: DataFrame, df_r2010_2: DataFrame):        
         self.excel_svc.delete_rows("R-2010-1", 4, 100)
         self.excel_svc.exportar_para_planilha(
             df_r2010_1,

@@ -5,12 +5,12 @@ from src.config import *
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
 
 
-# TODO: ajustar métodos que recebem variáveis globais de src.config para receberem parâmetros no lugar
 # TODO: ajustar projeto para se livrar das variáveis globais
+# TODO: ajustar métodos que recebem variáveis globais de src.config para receberem parâmetros no lugar
 # TODO: modificar pathing gateway para pegar os caminhos dos arquivos salvos em uma DB, de forma
 # que os caminhos possam ser setados pelo próprio usuário. Os caminhos atuais seriam o "default", mas
-# não seriam fixos. Por exemplo, carreguei o template e deixo ele salvo. Fazer uma interface para os templates
-# no próprio app para não depender da planilha?
+# não seriam fixos. Por exemplo, carreguei o template e deixo ele salvo. 
+
 class PathingGateway(IPathingGateway):
     """_summary_ Centraliza a lógica de diretórios e caminhos de arquivos do sistema. Ele detecta automaticamente se o usuário está utilizando o caminho base local ou o OneDrive e fornece os caminhos absolutos para templates, conferências, relatórios em PDF e arquivos de exportação, baseados no ano e mês atuais.
 

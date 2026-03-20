@@ -8,7 +8,7 @@ class NotaLancamentoParser:
     def __init__(self, siggo_svc: ISiggoService) -> None:
         self.siggo_svc = siggo_svc
 
-    def parse(self, nls: list[str]) -> list[NotaLancamento] | None:
+    def parse_siggo(self, nls: list[str]) -> list[NotaLancamento] | None:
         def limpar_moeda(valor):
             if pd.isna(valor) or valor == "":
                 return 0.0

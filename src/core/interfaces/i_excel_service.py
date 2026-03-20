@@ -5,7 +5,6 @@ from typing import Any, List, Optional
 from pandas import DataFrame
 
 
-# TODO: refatorar para que o usecase inicialize a planilha desejada, e não a factory
 class IExcelService(ABC):
     """
     Define a interface (contrato) para um serviço que

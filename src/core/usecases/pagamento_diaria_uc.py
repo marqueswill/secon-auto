@@ -53,10 +53,10 @@ class PagamentoDiariaUseCase:
                 )
             )
 
-            dados_extraidos = self.parser_ne.parser_diarias(caminho_pdf)
+            dados_extraidos = self.parser_ne.parse_pdf(caminho_pdf)
             #TODO: passar lógica de dict para lógica da entidade NotaEmpenho
-            processo = dados_extraidos["processo"]
-            observacao = dados_extraidos["observacao"]
+            processo = dados_extraidos.processo
+            observacao = dados_extraidos.observacao
 
             cabecalho = CabecalhoNL(
                 prioridade="F0",
@@ -66,15 +66,15 @@ class PagamentoDiariaUseCase:
                 observacao=observacao,
             )
 
-            for dados in dados_extraidos["dados"]:
+            for dados in dados_extraidos.dados:
                 evento1 = "510379"
                 evento2 = "520379"
-                inscricao = dados["nune"]
+                inscricao = dados.nune
                 classcont1 = "113110105"
                 classcont2 = "218910200"
-                classorc = str(dados["natureza"]) + str(dados["subitem"])
-                fonte = dados["fonte"]
-                valor = dados["valor"]
+                classorc = str(dados.natureza) + str(dados.subitem)
+                fonte = dados.fonte
+                valor = dados.valor
 
                 linha1 = [evento1, inscricao, classcont1, classorc, fonte, valor]
                 linha2 = [evento2, inscricao, classcont2, classorc, fonte, valor]

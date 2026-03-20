@@ -10,7 +10,6 @@ class ITemplateFolhaGateway(ABC):
     Também interage com as planilhas de template das NLs de folha de pagamento.
     """
 
-    # TODO: renomear pra um nome menos confuso
     @abstractmethod
     def carregar_template_nl(
         self, caminho_completo: str, template: str, incluir_calculos=True

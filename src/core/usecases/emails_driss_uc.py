@@ -33,7 +33,7 @@ class EmailsDrissUseCase:
 
     def get_pdf_por_empresa(self):
         caminho_pdf = self.pathing_gw.get_caminho_pdf_driss()
-        paginas = self.pdf_svc.get_pdfs_driss(caminho_pdf)
+        paginas = self.pdf_svc.get_pdf_pages(caminho_pdf)
         paginas_por_empresa = {}
         # Identifica a empresa em cada página e agrupa as páginas por empresa
         for page in paginas:

@@ -14,7 +14,6 @@ from src.config import *
 from src.core.entities.entities import CabecalhoNL, DadosPreenchimento, NotaLancamento
 
 
-# TODO: verificar formato dos DFs para o preenchimento
 class PreenchimentoGateway(IPreenchimentoGateway):
     """_summary_ Orquestra o processo de preenchimento automático no sistema web (SIGGO). Ele traduz os dados dos DataFrames (vindos dos casos de uso) em ações de navegação, selecionando opções e preenchendo campos na interface web através do SiggoService. Também possui funcionalidade para extrair dados já preenchidos da tela.
 
@@ -76,7 +75,6 @@ class PreenchimentoGateway(IPreenchimentoGateway):
 
         self.siggo_driver.fechar_primeira_aba()
 
-    # TODO: carregar cabeçalho dinamicamente
     def preparar_preechimento_cabecalho(self, cabecalho: CabecalhoNL):
 
         cabecalho.observacao = cabecalho.observacao.replace(

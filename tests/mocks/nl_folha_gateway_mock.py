@@ -1,4 +1,4 @@
-from src.infrastructure.services.nl_folha_gateway import TemplateFolhaGateway
+from src.infrastructure.services.template_folha_gateway import TemplateFolhaGateway
 
 
 class TemplateFolhaGatewayMock(TemplateFolhaGateway):

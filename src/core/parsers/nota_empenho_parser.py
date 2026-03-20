@@ -1,19 +1,21 @@
 from src.core.interfaces.i_pathing_gateway import IPathingGateway
 from src.core.entities.entities import NotaEmpenho
 from pypdf import PdfReader, PdfWriter, PageObject
-import re 
+import re
+from src.core.entities.entities import NotaEmpenho, ItemEmpenho
+
 
 class NotaEmpenhoParser:
-    def __init__(self, pathing_gw:IPathingGateway) -> None:
+    def __init__(self, pathing_gw: IPathingGateway) -> None:
         self.pathing_gw = pathing_gw
 
-    #TODO: fazer uma versão genérica que extrai mais dados da NE
-    def executar(self, caminho_pdf:str) -> NotaEmpenho:
-        """Extrai dados de uma NE."""
-
+    # TODO: implementar tipo o das NLs, só que na aba "listar nota de empenho"
+    # tem duas opções: fazer o parse para cada NE de um processo desejado
+    def parse_siggo(self,  processo="") -> NotaEmpenho:
+        """Extrai dados de uma NE do siggo."""
         ...
 
-    def parser_diarias(self, caminho_pdf: str) -> dict:
+    def parse_pdf(self, caminho_pdf: str) -> NotaEmpenho:
         """Extrai dados de uma NE de diárias."""
 
         with open(caminho_pdf, "rb") as file:
@@ -29,14 +31,12 @@ class NotaEmpenhoParser:
         file.close()
 
         dados = []
-
         for dados_brutos in notas_empenho:
             processo_match = re.search(r"Número do Processo\s*([\d/-]+)", dados_brutos)
             processo = processo_match.group(1)
 
             nune_match = re.search(r"Número do Documento\s*(\d{4}NE\d+)", dados_brutos)
             nune = nune_match.group(1) if nune_match else None
-            # print(nune)
 
             credor_match = re.search(r"Credor\s*(\d+)", dados_brutos)
             credor = credor_match.group(1) if credor_match else None
@@ -73,17 +73,21 @@ class NotaEmpenhoParser:
             subitem = subitems[0]
 
             dados.append(
-                {
-                    "nune": nune,
-                    "credor": credor,
-                    "fonte": fonte,
-                    "valor": valor,
-                    "natureza": natureza,
-                    "subitem": subitem,
-                }
+                ItemEmpenho(
+                    credor=credor,
+                    fonte=fonte,
+                    natureza=natureza,
+                    nune=nune,
+                    subitem=subitem,
+                    valor=valor,
+                )
             )
 
         # TODO: extrair observacao da NE
-        observacao = ""
-
-        return {"processo": processo, "observacao": observacao, "dados": dados}
+        ne = NotaEmpenho(
+            processo=processo,
+            observacao="",
+            dados=dados,
+        )
+        print(ne)
+        return ne

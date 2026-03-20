@@ -57,6 +57,7 @@ class TemplateFolhaGateway(ITemplateFolhaGateway):
         except Exception as e:
             raise Exception(e)
 
+    # TODO: carregar cabeçalho dinamicamente
     def carregar_cabecalho(self, caminho_completo: str, template: str) -> CabecalhoNL:
         cabecalho_dict = {}
 

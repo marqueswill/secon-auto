@@ -9,7 +9,7 @@ class ExportarDadosFolhaUseCase:
 
     # O executar recebe uma lista com as NLs para realizar o parse
     def executar(self, lista_nls: list[str]):
-        todos_dados_nl = self.parser.parse(lista_nls)
+        todos_dados_nl = self.parser.parse_siggo(lista_nls)
         # for tabela in todos_dados_nl:
         #     self.excel_svc.export_table(tabela, tabela.nome)
 

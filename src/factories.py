@@ -6,7 +6,7 @@ from src.infrastructure.services.excel_service_win32 import ExcelServiceWin32
 from src.infrastructure.services.siggo_service import SiggoService
 
 from src.infrastructure.gateways.preenchimento_gateway import PreenchimentoGateway
-from src.infrastructure.gateways.nl_folha_gateway import TemplateFolhaGateway
+from src.infrastructure.gateways.template_folha_gateway import TemplateFolhaGateway
 from src.infrastructure.gateways.pathing_gateway import PathingGateway
 from src.infrastructure.gateways.conferencia_gateway import ConferenciaGateway
 
