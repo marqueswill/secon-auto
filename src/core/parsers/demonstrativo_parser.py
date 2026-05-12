@@ -29,12 +29,15 @@ class DemonstrativoParser:
             tipo_servico_match.group(1).strip() if tipo_servico_match else None
         )
 
-        valor_nf_match = re.search(r"VALOR DA NF:\s*([\d.,]+)\s*R\$", text)
+        # valor_nf_match = re.search(r"VALOR DA NF:\s*([\d.,]+)\s*R\$", text)
+        valor_nf_match = re.search(r"R\s*\$\s*([\d.]+,\d{2})", text)
         valor_nf = (
             valor_nf_match.group(1).replace(".", "").replace(",", ".")
             if valor_nf_match
             else None
         )
+
+        
 
         num_nf_match = re.search(r"[\s\n]+([\d.,]+) Emissão:", text)
         num_nf = (
