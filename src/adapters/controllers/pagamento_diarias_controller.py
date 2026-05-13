@@ -2,7 +2,7 @@ from src.infrastructure.services.console_service import ConsoleService
 from src.factories import UseCaseFactory
 
 
-def PagamentoDiariaController(run=True):
+def PagamentoDiariaController(run=False):
     app_view = ConsoleService()
     app_view.clear_console()
 

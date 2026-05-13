@@ -3,7 +3,7 @@ from src.infrastructure.services.console_service import ConsoleService
 from src.config import *
 
 
-def NLAutomaticaController(run=True):
+def NLAutomaticaController(run=False):
     app_view = ConsoleService()
     app_view.clear_console()
 

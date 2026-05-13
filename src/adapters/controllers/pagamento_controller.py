@@ -6,7 +6,7 @@ from src.infrastructure.services.console_service import ConsoleService
 from src.config import *
 
 
-def FolhaPagamentoController(test=False, run=True):
+def FolhaPagamentoController(test=True, run=False):
     """Função principal que atua como o Controller da aplicação."""
     app_view = ConsoleService()
     app_view.clear_console()
