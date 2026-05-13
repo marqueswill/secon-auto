@@ -20,14 +20,20 @@ class ExtrairDadosR2000UseCase:
         self.pdf_svc = pdf_svc
 
     def executar(self, meses_escolhidos: list[str]):
-        for pasta_mes in meses_escolhidos:
-            try:
-                dados_inss = self.extrair_dados_inss(pasta_mes)
-                df_r2010_1, df_r2010_2 = self.gerar_dataframes_reinf(dados_inss)
-                self.exportar_planilhas_r2000(df_r2010_1, df_r2010_2)
-            except Exception as e:
-                print(e)
-            finally:
+        try:
+            for pasta_mes in meses_escolhidos:
+                try:
+                    dados_inss = self.extrair_dados_inss(pasta_mes)
+                    df_r2010_1, df_r2010_2 = self.gerar_dataframes_reinf(dados_inss)
+                    
+                    if df_r2010_1 is not None and df_r2010_2 is not None:
+                        self.exportar_planilhas_r2000(df_r2010_1, df_r2010_2)
+                    else:
+                        print(f"PULANDO EXPORTAÇÃO: Nenhum dado encontrado para o mês {pasta_mes}")
+                except Exception as e:
+                    print(e)
+        finally:
+            if hasattr(self.excel_svc, "__exit__"):
                 self.excel_svc.__exit__()
 
     def exportar_valores_pagos(self, meses_escolhidos: list[str]):
@@ -45,6 +51,8 @@ class ExtrairDadosR2000UseCase:
     def extrair_dados_inss(self, pasta_mes: str):
         caminhos_pdf = self.pathing_gw.get_caminhos_demonstrativos(pasta_mes)
         lista_de_dados_completa = []
+        df = pd.DataFrame()
+
         for caminho_pdf in caminhos_pdf:
             dados_extraidos = self.pdf_svc.parse_dados_inss(caminho_pdf)
 
@@ -54,8 +62,6 @@ class ExtrairDadosR2000UseCase:
         if lista_de_dados_completa:
             df = DataFrame(lista_de_dados_completa)
             df = df.sort_values(by=["CNPJ", "NUM_NF"]).reset_index(drop=True)
-
-        df = df.sort_values(by=["CNPJ", "NUM_NF"])
 
         return df
 

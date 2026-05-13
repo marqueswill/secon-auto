@@ -29,7 +29,7 @@ class DemonstrativoParser:
             tipo_servico_match.group(1).strip() if tipo_servico_match else None
         )
 
-        valor_nf_match = re.search(r"VALOR DA NF:\s*([\d.,]+)\s*R\$", text)
+        valor_nf_match = re.search(r"VALOR DA NF:.*?(?:R\$)?\s*([\d.,]+)", text)
         valor_nf = (
             valor_nf_match.group(1).replace(".", "").replace(",", ".")
             if valor_nf_match
@@ -51,7 +51,7 @@ class DemonstrativoParser:
         tipo_inss = tipo_inss_match.group(1).strip() if tipo_inss_match else None
 
         base_calculo_inss_match = re.search(
-            r"BASE DE CÁLCULO INSS:\s*([\d.,]+)\s*R\$", text
+            r"BASE DE CÁLCULO INSS:.*?(?:R\$)?\s*([\d.,]+)", text
         )
         base_calculo_inss = (
             base_calculo_inss_match.group(1).replace(".", "").replace(",", ".")
@@ -60,7 +60,7 @@ class DemonstrativoParser:
         )
 
         valor_inss_retido_match = re.search(
-            r"VALOR DE INSS RETIDO:\s*([\d.,]+)\s*R\$", text
+            r"VALOR DE INSS RETIDO:.*?(?:R\$)?\s*([\d.,]+)", text
         )
         valor_inss_retido = (
             valor_inss_retido_match.group(1).replace(".", "").replace(",", ".")

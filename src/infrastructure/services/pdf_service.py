@@ -98,3 +98,102 @@ class PdfService(IPdfService):
                 dados_bruto_nls.append(texto_completo_pdf)
 
         return dados_bruto_nls
+
+    def parse_dados_inss(self, caminho_pdf: str):
+        """Extrai dados de um PDF de demonstrativo de INSS."""
+
+        try:
+            with open(caminho_pdf, "rb") as file:
+                reader = PdfReader(file)
+                text = ""
+                for page in reader.pages:
+                    text += page.extract_text()
+            
+            # Normaliza o texto: remove quebras de linha e espaços extras
+            text = re.sub(r"\s+", " ", text)
+
+            # --- Extração com Regex Flexíveis ---
+            
+            # Processo
+            processo_match = re.search(r"PROCESSO\s*Nº\s*:?\s*([\d/]+)", text, re.IGNORECASE)
+            processo = processo_match.group(1) if processo_match else None
+
+            # CNPJ
+            cnpj_match = re.search(r"(?:CNPJ.*?PRESTADOR.*?|CNPJ.*?EMPRESA.*?)\s*([\d./-]+)", text, re.IGNORECASE)
+            cnpj = cnpj_match.group(1) if cnpj_match else None
+
+            # Valor da NF
+            valor_nf_match = re.search(r"VALOR\s*DA\s*NF\s*:?.*?(?:R\$)?\s*([\d.,]+)", text, re.IGNORECASE)
+            valor_nf = valor_nf_match.group(1).replace(".", "").replace(",", ".") if valor_nf_match else None
+
+            # Número da NF
+            num_nf_match = re.search(r"([\d.,]+)\s*Emissão:", text, re.IGNORECASE)
+            num_nf = num_nf_match.group(1).strip().replace(".", "") if num_nf_match else None
+
+            # Data de Emissão
+            data_emissao_match = re.search(r"Emissão:\s*([\d/]+)", text, re.IGNORECASE)
+            data_emissao = data_emissao_match.group(1) if data_emissao_match else None
+
+            # Série
+            serie_match = re.search(r"Série:\s*([\d]+)", text, re.IGNORECASE)
+            serie = serie_match.group(1).strip() if serie_match else None
+
+            # Tipo INSS
+            tipo_inss_match = re.search(r"TIPO\s*DE\s*SERVIÇO\s*INSS\s*:?\s*([\d]+)", text, re.IGNORECASE)
+            tipo_inss = tipo_inss_match.group(1).strip() if tipo_inss_match else None
+
+            # Base de Cálculo INSS
+            base_calculo_inss_match = re.search(r"BASE\s*DE\s*CÁLCULO\s*INSS\s*:?.*?(?:R\$)?\s*([\d.,]+)", text, re.IGNORECASE)
+            base_calculo_inss = base_calculo_inss_match.group(1).replace(".", "").replace(",", ".") if base_calculo_inss_match else None
+
+            # Valor INSS Retido
+            valor_inss_retido_match = re.search(r"VALOR\s*DE\s*INSS\s*RETIDO\s*:?.*?(?:R\$)?\s*([\d.,]+)", text, re.IGNORECASE)
+            valor_inss_retido = valor_inss_retido_match.group(1).replace(".", "").replace(",", ".") if valor_inss_retido_match else None
+
+            # CPRB
+            cprb_match = re.search(r"CONTRIBUINTE\s*DA\s*CPRB\s*\?\s*([\w])", text, re.IGNORECASE)
+            cprb = cprb_match.group(1) if cprb_match else None
+
+            # --- Debug no Terminal ---
+            nome_arquivo = os.path.basename(caminho_pdf)
+            if not valor_nf or not num_nf:
+                print(f"  [AVISO] Dados incompletos em: {nome_arquivo} (NF: {num_nf}, Valor: {valor_nf})")
+            else:
+                print(f"  [OK] Lido: {nome_arquivo} - NF {num_nf}")
+
+            dados_pdf = {
+                "CHAVE": (
+                    "0" * (15 - len(processo)) + processo + "," + num_nf
+                    if processo and num_nf
+                    else None
+                ),
+                "PROCESSO": processo,
+                "CNPJ": (
+                    str(cnpj.replace(".", "").replace("/", "").replace("-", ""))
+                    if cnpj
+                    else None
+                ),
+                "TIPO_SERVICO": "", # Pode ser preenchido se necessário
+                "VALOR_NF": float(valor_nf) if valor_nf else None,
+                "NUM_NF": num_nf if num_nf else None,
+                "DATA_EMISSAO": (
+                    datetime.strptime(data_emissao, "%d/%m/%Y").date()
+                    if data_emissao
+                    else None
+                ),
+                "SERIE": serie,
+                "TIPO_INSS": tipo_inss,
+                "BASE_CALCULO_INSS": (
+                    float(base_calculo_inss) if base_calculo_inss else None
+                ),
+                "VALOR_INSS_RETIDO": (
+                    float(valor_inss_retido) if valor_inss_retido else None
+                ),
+                "CPRB": 0 if cprb == "N" else 1,
+            }
+
+            return dados_pdf if cnpj else None
+
+        except Exception as e:
+            print(f"  [ERRO] Falha ao processar {os.path.basename(caminho_pdf)}: {e}")
+            return None

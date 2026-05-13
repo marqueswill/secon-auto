@@ -137,7 +137,7 @@ class UseCaseFactory:
             ExcelService.copy_to(caminho_reinf_base, caminho_completo)
             caminho_planilha_reinf = pathing_gw.get_caminho_reinf(pasta_mes_escolhido)
 
-        excel_svc = ExcelServiceWin32(caminho_planilha_reinf)
+        excel_svc = ExcelService(caminho_planilha_reinf)
         use_case = ExtrairDadosR2000UseCase(excel_svc, pdf_svc, pathing_gw)
 
         return use_case

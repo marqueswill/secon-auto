@@ -198,7 +198,7 @@ class ExcelService(IExcelService):
             adjusted_width = max_length + 7
             sheet.column_dimensions[column_letter].width = adjusted_width
 
-    def delete_rows(self, sheet_name: str, start_row: int = 1):
+    def delete_rows(self, sheet_name: str, start_row: int = 1, end_row: int | None = None):
         """
         Deleta todas as linhas em uma planilha a partir de uma linha específica.
 

@@ -21,6 +21,8 @@ class ExcelServiceWin32(IExcelService):
     # workbook: Optional[CDispatch] = None
 
     def __init__(self, caminho_arquivo: str | None = None):
+        self.excel = None
+        self.workbook = None
         if caminho_arquivo is not None:
             self.caminho_arquivo = caminho_arquivo
             self.__enter__()
