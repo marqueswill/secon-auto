@@ -20,7 +20,7 @@ def ExtrairDadosR2000Controller():
         )
 
         if mes_escolhido:
-            use_case = factory.create_extrair_dados_r2000_usecase(mes_escolhido[0])
+            use_case = factory.create_extrair_dados_r2000_uc(mes_escolhido[0])
             use_case.executar(mes_escolhido)
             break
 
