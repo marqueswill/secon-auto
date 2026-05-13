@@ -36,6 +36,8 @@ class DemonstrativoParser:
             else None
         )
 
+        
+
         num_nf_match = re.search(r"[\s\n]+([\d.,]+) Emissão:", text)
         num_nf = (
             num_nf_match.group(1).strip().replace(".", "") if num_nf_match else None
