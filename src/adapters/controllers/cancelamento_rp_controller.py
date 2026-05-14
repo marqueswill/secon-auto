@@ -1,7 +1,7 @@
 from src.factories import UseCaseFactory
 from src.infrastructure.services.console_service import ConsoleService
 
-def CancelamentoRPController(run=True, test=False):
+def CancelamentoRPController(run=False, test=True):
     app_view = ConsoleService()
     factory = UseCaseFactory()
     use_case = factory.create_cancelamento_rp_uc()

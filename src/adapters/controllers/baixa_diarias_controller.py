@@ -2,7 +2,7 @@ from src.factories import UseCaseFactory
 from src.infrastructure.services.console_service import ConsoleService
 
 
-def BaixaDiariasController(run=True, test=False):
+def BaixaDiariasController(run=False, test=True):
     app_view = ConsoleService()
     factory = UseCaseFactory()
     use_case = factory.create_baixa_diarias_uc()

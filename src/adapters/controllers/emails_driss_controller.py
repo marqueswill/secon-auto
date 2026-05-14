@@ -2,7 +2,7 @@ from src.infrastructure.services.console_service import ConsoleService
 from src.factories import UseCaseFactory
 
 
-def EmailsDrissController(run=True, test=False):
+def EmailsDrissController(run=False, test=True):
     app_view = ConsoleService()
 
     factory = UseCaseFactory()
